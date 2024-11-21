@@ -15,7 +15,7 @@ const camera = new THREE.PerspectiveCamera(
   0.1,
   1000
 );
-camera.position.set(2, 2, 5);
+camera.position.set(.1, 1.2, -4.1);
 
 const renderer = new THREE.WebGLRenderer({
   canvas: document.getElementById("three-canvas"),
@@ -71,6 +71,8 @@ loader.load(
     console.log("Model geladen:", gltf.scene);
     sneakerModel = gltf.scene;
     sneakerModel.scale.set(15, 15, 15);
+    // rotate the sneaker to face the camera
+    sneakerModel.rotation.y = Math.PI / 2;
     sneakerModel.traverse((node) => {
       if (node.isMesh) {
         console.log("Mesh gevonden:", node.name);
@@ -160,7 +162,7 @@ const animate = () => {
 animate();
 
 window.addEventListener("resize", () => {
-  const innerWidth = window.innerWidth - 300;
+  const innerWidth = window.innerWidth - 350;
   const innerHeight = window.innerHeight;
   camera.aspect = innerWidth / innerHeight;
   camera.updateProjectionMatrix();
