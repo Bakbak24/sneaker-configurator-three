@@ -160,7 +160,8 @@ const animate = () => {
 animate();
 
 window.addEventListener("resize", () => {
-  const { innerWidth, innerHeight } = window;
+  const innerWidth = window.innerWidth - 300;
+  const innerHeight = window.innerHeight;
   camera.aspect = innerWidth / innerHeight;
   camera.updateProjectionMatrix();
   renderer.setSize(innerWidth, innerHeight);
