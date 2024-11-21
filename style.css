@@ -61,6 +61,16 @@ canvas {
   font-weight: bold;
 }
 
+#shoe-size {
+  padding: 10px;
+  width: 100%;
+  border: none;
+  outline: none;
+  background-color: #222;
+  color: #fff;
+  font-size: 14px;
+}
+
 .color-options {
   display: flex;
   gap: 10px;
@@ -97,16 +107,13 @@ canvas {
 }
 
 select#extra-option {
-  width: 100%;
   padding: 10px;
-  border: 2px solid #222;
-  border-radius: 4px;
-  background-color: #333;
+  width: 100%;
+  border: none;
+  outline: none;
+  background-color: #222;
   color: #fff;
   font-size: 14px;
-  cursor: pointer;
-  outline: none;
-  transition: all 0.3s ease;
 }
 
 select#extra-option:hover {

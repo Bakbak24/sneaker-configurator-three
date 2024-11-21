@@ -94,6 +94,57 @@ lightFolder.add(directionalLight.position, "y", -10, 10, 0.1).name("Light Y");
 lightFolder.add(directionalLight.position, "z", -10, 10, 0.1).name("Light Z");
 lightFolder.open();
 
+const shoeSizeInput = document.getElementById("shoe-size");
+shoeSizeInput.addEventListener("change", () => {
+  const selectedSize = parseInt(shoeSizeInput.value, 10);
+  if (!sneakerModel) return;
+  const baseScale = 15;
+  const scaleAdjustment = 0.2;
+  const defaultSize = 40;
+  const newScale = baseScale + (selectedSize - defaultSize) * scaleAdjustment;
+  sneakerModel.scale.set(newScale, newScale, newScale);
+});
+
+function changeLaces(color) {
+  if (sneakerModel) {
+    sneakerModel.traverse((child) => {
+      if (child.isMesh && child.material.name === "mat_laces") {
+        child.material.color.set(color);
+        console.log(`Laces color changed to ${color}`);
+      }
+    });
+  }
+}
+
+function changeSoles(color) {
+  if (sneakerModel) {
+    sneakerModel.traverse((child) => {
+      if (
+        child.isMesh &&
+        (child.material.name === "mat_sole_top" ||
+          child.material.name === "mat_sole_bottom")
+      ) {
+        child.material.color.set(color);
+        console.log(`Sole color changed to ${color}`);
+      }
+    });
+  }
+}
+
+document.querySelectorAll("#laces-colors .color-square").forEach((square) => {
+  square.addEventListener("click", () => {
+    const color = square.getAttribute("data-color");
+    changeLaces(color);
+  });
+});
+
+document.querySelectorAll("#sole-colors .color-square").forEach((square) => {
+  square.addEventListener("click", () => {
+    const color = square.getAttribute("data-color");
+    changeSoles(color);
+  });
+});
+
 const animate = () => {
   requestAnimationFrame(animate);
   controls.update();
