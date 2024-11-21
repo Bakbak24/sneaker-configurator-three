@@ -94,6 +94,12 @@ lightFolder.add(directionalLight.position, "y", -10, 10, 0.1).name("Light Y");
 lightFolder.add(directionalLight.position, "z", -10, 10, 0.1).name("Light Z");
 lightFolder.open();
 
+const cameraFolder = gui.addFolder("Camera Settings");
+cameraFolder.add(camera.position, "x", -10, 10, 0.1).name("Camera X");
+cameraFolder.add(camera.position, "y", -10, 10, 0.1).name("Camera Y");
+cameraFolder.add(camera.position, "z", -10, 10, 0.1).name("Camera Z");
+cameraFolder.open();
+
 const shoeSizeInput = document.getElementById("shoe-size");
 shoeSizeInput.addEventListener("change", () => {
   const selectedSize = parseInt(shoeSizeInput.value, 10);
@@ -105,7 +111,7 @@ shoeSizeInput.addEventListener("change", () => {
   sneakerModel.scale.set(newScale, newScale, newScale);
 });
 
-function changeLaces(color) {
+function changeLaces(color) { 
   if (sneakerModel) {
     sneakerModel.traverse((child) => {
       if (child.isMesh && child.material.name === "mat_laces") {
