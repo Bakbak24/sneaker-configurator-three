@@ -25,6 +25,10 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.shadowMap.enabled = true;
 
 const controls = new OrbitControls(camera, renderer.domElement);
+controls.addEventListener("change", () => {
+  console.log("Camera Position:", camera.position);
+  console.log("Camera Rotation:", camera.rotation);
+});
 
 const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
 scene.add(ambientLight);
@@ -71,7 +75,6 @@ loader.load(
     console.log("Model geladen:", gltf.scene);
     sneakerModel = gltf.scene;
     sneakerModel.scale.set(15, 15, 15);
-    // rotate the sneaker to face the camera
     sneakerModel.rotation.y = Math.PI / 2;
     sneakerModel.traverse((node) => {
       if (node.isMesh) {
