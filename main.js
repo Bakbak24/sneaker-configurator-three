@@ -4,6 +4,8 @@ import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import { DRACOLoader } from "three/examples/jsm/loaders/DRACOLoader";
 import { GUI } from "dat.gui";
 
+console.log("Script gestart");
+
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0x1a1a1a);
 
@@ -22,7 +24,6 @@ const renderer = new THREE.WebGLRenderer({
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.shadowMap.enabled = true;
 
-
 const controls = new OrbitControls(camera, renderer.domElement);
 
 const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
@@ -36,19 +37,19 @@ scene.add(directionalLight);
 const cubeTextureLoader = new THREE.CubeTextureLoader();
 const envMap = cubeTextureLoader.load(
   [
-    './envmaps/blocky/px.png',
-    './envmaps/blocky/nx.png',
-    './envmaps/blocky/py.png',
-    './envmaps/blocky/ny.png',
-    './envmaps/blocky/pz.png',
-    './envmaps/blocky/nz.png',
+    "./envmaps/blocky/px.png",
+    "./envmaps/blocky/nx.png",
+    "./envmaps/blocky/py.png",
+    "./envmaps/blocky/ny.png",
+    "./envmaps/blocky/pz.png",
+    "./envmaps/blocky/nz.png",
   ],
   () => {
-    console.log('Environment map loaded successfully');
+    console.log("Environment map loaded successfully");
   },
   undefined,
   (error) => {
-    console.error('Error loading environment map:', error);
+    console.error("Error loading environment map:", error);
   }
 );
 scene.environment = envMap;
@@ -62,15 +63,21 @@ dracoLoader.setDecoderPath(
 const loader = new GLTFLoader();
 loader.setDRACOLoader(dracoLoader);
 
+let sneakerModel;
+
 loader.load(
   "/assets/Shoe_compressed.glb",
   (gltf) => {
-    const model = gltf.scene;
-    model.scale.set(15, 15, 15);
-    model.traverse((node) => {
-      if (node.isMesh) node.castShadow = true;
+    console.log("Model geladen:", gltf.scene);
+    sneakerModel = gltf.scene;
+    sneakerModel.scale.set(15, 15, 15);
+    sneakerModel.traverse((node) => {
+      if (node.isMesh) {
+        console.log("Mesh gevonden:", node.name);
+        node.castShadow = true;
+      }
     });
-    scene.add(model);
+    scene.add(sneakerModel);
   },
   undefined,
   (error) => {
