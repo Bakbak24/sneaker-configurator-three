@@ -12,85 +12,256 @@
       <div class="logo-container">
         <img src="./assets/swear-logo-wh.png" alt="Swear Logo" class="logo" />
       </div>
-      <div class="config-group">
-        <label for="shoe-size">Shoe Size</label>
-        <select id="shoe-size">
-          <option value="36">36</option>
-          <option value="37">37</option>
-          <option value="38">38</option>
-          <option value="39">39</option>
-          <option value="40">40</option>
-          <option value="41">41</option>
-          <option value="42">42</option>
-          <option value="43">43</option>
-          <option value="44">44</option>
-          <option value="45">45</option>
-          <option value="46">46</option>
-          <option value="47">47</option>
-          <option value="48">48</option>
-          <option value="49">49</option>
-          <option value="50">50</option>
-        </select>
-        <label for="laces-color">Laces Color</label>
-        <div class="color-options" id="laces-colors">
-          <div
-            class="color-square"
-            data-color="#ffffff"
-            style="background-color: #ffffff"
-          ></div>
-          <div
-            class="color-square"
-            data-color="#ff0000"
-            style="background-color: #ff0000"
-          ></div>
-          <div
-            class="color-square"
-            data-color="#00ff00"
-            style="background-color: #00ff00"
-          ></div>
-          <div
-            class="color-square"
-            data-color="#0000ff"
-            style="background-color: #0000ff"
-          ></div>
+
+      <div id="config-steps" class="config-steps">
+        <!-- Step 1: Laces Colors -->
+        <div id="step-laces" class="config-step">
+          <div class="step-header">
+            <h3>Laces Colors</h3>
+            <button id="next-to-sole" class="arrow-button">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+                <polyline points="12 5 19 12 12 19"></polyline>
+              </svg>
+            </button>
+          </div>
+          <div class="color-options" id="laces-colors">
+            <div class="color-square" data-color="#ffffff" style="background-color: #ffffff"></div>
+            <div class="color-square" data-color="#ff0000" style="background-color: #ff0000"></div>
+            <div class="color-square" data-color="#00ff00" style="background-color: #00ff00"></div>
+            <div class="color-square" data-color="#0000ff" style="background-color: #0000ff"></div>
+            <div class="color-square" data-color="#ffff00" style="background-color: #ffff00"></div>
+            <div class="color-square" data-color="#ff00ff" style="background-color: #ff00ff"></div>
+            <div class="color-square" data-color="#00ffff" style="background-color: #00ffff"></div>
+            <div class="color-square" data-color="#800000" style="background-color: #800000"></div>
+            <div class="color-square" data-color="#808000" style="background-color: #808000"></div>
+            <div class="color-square" data-color="#008000" style="background-color: #008000"></div>
+            <div class="color-square" data-color="#800080" style="background-color: #800080"></div>
+            <div class="color-square" data-color="#008080" style="background-color: #008080"></div>
+            <div class="color-square" data-color="#000080" style="background-color: #000080"></div>
+            <div class="color-square" data-color="#c0c0c0" style="background-color: #c0c0c0"></div>
+            <div class="color-square" data-color="#808080" style="background-color: #808080"></div>
+            <div class="color-square" data-color="#ff4500" style="background-color: #ff4500"></div>
+            <div class="color-square" data-color="#32cd32" style="background-color: #32cd32"></div>
+            <div class="color-square" data-color="#8a2be2" style="background-color: #8a2be2"></div>
+            <div class="color-square" data-color="#5f9ea0" style="background-color: #5f9ea0"></div>
+            <div class="color-square" data-color="#d2691e" style="background-color: #d2691e"></div>
+            <div class="color-square" data-color="#7fffd4" style="background-color: #7fffd4"></div>
+            <div class="color-square" data-color="#6495ed" style="background-color: #6495ed"></div>
+            <div class="color-square" data-color="#dc143c" style="background-color: #dc143c"></div>
+            <div class="color-square" data-color="#006400" style="background-color: #006400"></div>
+          </div>
+          
+        </div>
+
+        <!-- Step 2: Sole Colors -->
+        <div id="step-sole" class="config-step hidden">
+          <div class="step-header">
+            <button id="back-to-laces" class="arrow-button">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <line x1="19" y1="12" x2="5" y2="12"></line>
+                <polyline points="12 19 5 12 12 5"></polyline>
+              </svg>
+            </button>
+            <h3>Sole Colors</h3>
+            <button id="next-to-tongue" class="arrow-button">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+                <polyline points="12 5 19 12 12 19"></polyline>
+              </svg>
+            </button>
+          </div>
+          <div class="color-options" id="sole-colors">
+            <div class="color-square" data-color="#ffffff" style="background-color: #ffffff"></div>
+            <div class="color-square" data-color="#ff0000" style="background-color: #ff0000"></div>
+            <div class="color-square" data-color="#00ff00" style="background-color: #00ff00"></div>
+            <div class="color-square" data-color="#0000ff" style="background-color: #0000ff"></div>
+            <div class="color-square" data-color="#ffff00" style="background-color: #ffff00"></div>
+            <div class="color-square" data-color="#ff00ff" style="background-color: #ff00ff"></div>
+            <div class="color-square" data-color="#00ffff" style="background-color: #00ffff"></div>
+            <div class="color-square" data-color="#800000" style="background-color: #800000"></div>
+            <div class="color-square" data-color="#808000" style="background-color: #808000"></div>
+            <div class="color-square" data-color="#008000" style="background-color: #008000"></div>
+            <div class="color-square" data-color="#800080" style="background-color: #800080"></div>
+            <div class="color-square" data-color="#008080" style="background-color: #008080"></div>
+            <div class="color-square" data-color="#000080" style="background-color: #000080"></div>
+            <div class="color-square" data-color="#c0c0c0" style="background-color: #c0c0c0"></div>
+            <div class="color-square" data-color="#808080" style="background-color: #808080"></div>
+            <div class="color-square" data-color="#ff4500" style="background-color: #ff4500"></div>
+            <div class="color-square" data-color="#32cd32" style="background-color: #32cd32"></div>
+            <div class="color-square" data-color="#8a2be2" style="background-color: #8a2be2"></div>
+            <div class="color-square" data-color="#5f9ea0" style="background-color: #5f9ea0"></div>
+            <div class="color-square" data-color="#d2691e" style="background-color: #d2691e"></div>
+            <div class="color-square" data-color="#7fffd4" style="background-color: #7fffd4"></div>
+            <div class="color-square" data-color="#6495ed" style="background-color: #6495ed"></div>
+            <div class="color-square" data-color="#dc143c" style="background-color: #dc143c"></div>
+            <div class="color-square" data-color="#006400" style="background-color: #006400"></div>
+          </div>
+          
+        </div>
+
+        <!-- Step 3: Tongue Colors -->
+        <div id="step-tongue" class="config-step hidden">
+          <div class="step-header">
+            <button id="back-to-sole" class="arrow-button">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <line x1="19" y1="12" x2="5" y2="12"></line>
+                <polyline points="12 19 5 12 12 5"></polyline>
+              </svg>
+            </button>
+            <h3>Tongue Colors</h3>
+            <button id="next-to-tip" class="arrow-button">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+                <polyline points="12 5 19 12 12 19"></polyline>
+              </svg>
+            </button>
+          </div>
+          <div class="color-options" id="tongue-colors">
+            <div class="color-square" data-color="#ffffff" style="background-color: #ffffff"></div>
+            <div class="color-square" data-color="#ff0000" style="background-color: #ff0000"></div>
+            <div class="color-square" data-color="#00ff00" style="background-color: #00ff00"></div>
+            <div class="color-square" data-color="#0000ff" style="background-color: #0000ff"></div>
+            <div class="color-square" data-color="#ffff00" style="background-color: #ffff00"></div>
+            <div class="color-square" data-color="#ff00ff" style="background-color: #ff00ff"></div>
+            <div class="color-square" data-color="#00ffff" style="background-color: #00ffff"></div>
+            <div class="color-square" data-color="#800000" style="background-color: #800000"></div>
+            <div class="color-square" data-color="#808000" style="background-color: #808000"></div>
+            <div class="color-square" data-color="#008000" style="background-color: #008000"></div>
+            <div class="color-square" data-color="#800080" style="background-color: #800080"></div>
+            <div class="color-square" data-color="#008080" style="background-color: #008080"></div>
+            <div class="color-square" data-color="#000080" style="background-color: #000080"></div>
+            <div class="color-square" data-color="#c0c0c0" style="background-color: #c0c0c0"></div>
+            <div class="color-square" data-color="#808080" style="background-color: #808080"></div>
+            <div class="color-square" data-color="#ff4500" style="background-color: #ff4500"></div>
+            <div class="color-square" data-color="#32cd32" style="background-color: #32cd32"></div>
+            <div class="color-square" data-color="#8a2be2" style="background-color: #8a2be2"></div>
+            <div class="color-square" data-color="#5f9ea0" style="background-color: #5f9ea0"></div>
+            <div class="color-square" data-color="#d2691e" style="background-color: #d2691e"></div>
+            <div class="color-square" data-color="#7fffd4" style="background-color: #7fffd4"></div>
+            <div class="color-square" data-color="#6495ed" style="background-color: #6495ed"></div>
+            <div class="color-square" data-color="#dc143c" style="background-color: #dc143c"></div>
+            <div class="color-square" data-color="#006400" style="background-color: #006400"></div>
+          </div>          
+        </div>
+
+        <!-- Step 4: tip Colors -->
+        <div id="step-tip" class="config-step hidden">
+          <div class="step-header">
+            <button id="back-to-tongue" class="arrow-button">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <line x1="19" y1="12" x2="5" y2="12"></line>
+                <polyline points="12 19 5 12 12 5"></polyline>
+              </svg>
+            </button>
+            <h3>Tip Colors</h3>
+          </div>
+          <div class="color-options" id="tip-colors">
+            <div class="color-square" data-color="#ffffff" style="background-color: #ffffff"></div>
+            <div class="color-square" data-color="#ff0000" style="background-color: #ff0000"></div>
+            <div class="color-square" data-color="#00ff00" style="background-color: #00ff00"></div>
+            <div class="color-square" data-color="#0000ff" style="background-color: #0000ff"></div>
+            <div class="color-square" data-color="#ffff00" style="background-color: #ffff00"></div>
+            <div class="color-square" data-color="#ff00ff" style="background-color: #ff00ff"></div>
+            <div class="color-square" data-color="#00ffff" style="background-color: #00ffff"></div>
+            <div class="color-square" data-color="#800000" style="background-color: #800000"></div>
+            <div class="color-square" data-color="#808000" style="background-color: #808000"></div>
+            <div class="color-square" data-color="#008000" style="background-color: #008000"></div>
+            <div class="color-square" data-color="#800080" style="background-color: #800080"></div>
+            <div class="color-square" data-color="#008080" style="background-color: #008080"></div>
+            <div class="color-square" data-color="#000080" style="background-color: #000080"></div>
+            <div class="color-square" data-color="#c0c0c0" style="background-color: #c0c0c0"></div>
+            <div class="color-square" data-color="#808080" style="background-color: #808080"></div>
+            <div class="color-square" data-color="#ff4500" style="background-color: #ff4500"></div>
+            <div class="color-square" data-color="#32cd32" style="background-color: #32cd32"></div>
+            <div class="color-square" data-color="#8a2be2" style="background-color: #8a2be2"></div>
+            <div class="color-square" data-color="#5f9ea0" style="background-color: #5f9ea0"></div>
+            <div class="color-square" data-color="#d2691e" style="background-color: #d2691e"></div>
+            <div class="color-square" data-color="#7fffd4" style="background-color: #7fffd4"></div>
+            <div class="color-square" data-color="#6495ed" style="background-color: #6495ed"></div>
+            <div class="color-square" data-color="#dc143c" style="background-color: #dc143c"></div>
+            <div class="color-square" data-color="#006400" style="background-color: #006400"></div>
+          </div>
+          
+        </div>
+        
+        <!-- Step 5: Extra Option -->
+        <div class="config-step hidden" id="step-extra">
+          <div class="step-header">
+            <button id="back-to-sole" class="arrow-button">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="feather feather-arrow-left"
+              >
+                <line x1="19" y1="12" x2="5" y2="12"></line>
+                <polyline points="12 19 5 12 12 5"></polyline>
+              </svg>
+            </button>
+            <h3>Extra Option</h3>
+          </div>
+          <select id="extra-option">
+            <option value="none">None</option>
+            <option value="logo">Add Logo</option>
+            <option value="pattern">Add Pattern</option>
+            <option value="charm">Add Charm</option>
+            <option value="material">Add Material</option>
+          </select>
         </div>
       </div>
-      <div class="config-group">
-        <label for="sole-color">Sole Color</label>
-        <div class="color-options" id="sole-colors">
-          <div
-            class="color-square"
-            data-color="#ffffff"
-            style="background-color: #ffffff"
-          ></div>
-          <div
-            class="color-square"
-            data-color="#000000"
-            style="background-color: #000000"
-          ></div>
-          <div
-            class="color-square"
-            data-color="#808080"
-            style="background-color: #808080"
-          ></div>
-          <div
-            class="color-square"
-            data-color="#ffff00"
-            style="background-color: #ffff00"
-          ></div>
-        </div>
-      </div>
-      <div class="config-group">
-        <label for="extra-option">Extra Option</label>
-        <select id="extra-option">
-          <option value="none">None</option>
-          <option value="logo">Add Logo</option>
-          <option value="pattern">Add Pattern</option>
-          <option value="charm">Add Charm</option>
-          <option value="material">Add Material</option>
-        </select>
-      </div>
-      <button id="apply-config" class="apply-button">Apply</button>
     </div>
     <canvas id="three-canvas"></canvas>
     <script type="module" src="./main.js"></script>

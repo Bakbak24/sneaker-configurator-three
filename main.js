@@ -6,17 +6,20 @@ import { GUI } from "dat.gui";
 
 console.log("Script gestart");
 
+// Initialize Scene
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0x1a1a1a);
 
+// Initialize Camera
 const camera = new THREE.PerspectiveCamera(
   75,
   window.innerWidth / window.innerHeight,
   0.1,
   1000
 );
-camera.position.set(.1, 1.2, -4.1);
+camera.position.set(0.1, 1.2, -4.1);
 
+// Initialize Renderer
 const renderer = new THREE.WebGLRenderer({
   canvas: document.getElementById("three-canvas"),
   antialias: true,
@@ -24,12 +27,10 @@ const renderer = new THREE.WebGLRenderer({
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.shadowMap.enabled = true;
 
+// Add OrbitControls
 const controls = new OrbitControls(camera, renderer.domElement);
-controls.addEventListener("change", () => {
-  console.log("Camera Position:", camera.position);
-  console.log("Camera Rotation:", camera.rotation);
-});
 
+// Add Lights
 const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
 scene.add(ambientLight);
 
@@ -38,6 +39,7 @@ directionalLight.position.set(5, 5, 5);
 directionalLight.castShadow = true;
 scene.add(directionalLight);
 
+// Add Environment Map
 const cubeTextureLoader = new THREE.CubeTextureLoader();
 const envMap = cubeTextureLoader.load(
   [
@@ -57,8 +59,8 @@ const envMap = cubeTextureLoader.load(
   }
 );
 scene.environment = envMap;
-scene.background = envMap;
 
+// Load Sneaker Model
 const dracoLoader = new DRACOLoader();
 dracoLoader.setDecoderPath(
   "https://cdn.jsdelivr.net/npm/three/examples/jsm/libs/draco/"
@@ -68,7 +70,6 @@ const loader = new GLTFLoader();
 loader.setDRACOLoader(dracoLoader);
 
 let sneakerModel;
-
 loader.load(
   "/assets/Shoe_compressed.glb",
   (gltf) => {
@@ -105,18 +106,19 @@ cameraFolder.add(camera.position, "y", -10, 10, 0.1).name("Camera Y");
 cameraFolder.add(camera.position, "z", -10, 10, 0.1).name("Camera Z");
 cameraFolder.open();
 
-const shoeSizeInput = document.getElementById("shoe-size");
-shoeSizeInput.addEventListener("change", () => {
-  const selectedSize = parseInt(shoeSizeInput.value, 10);
-  if (!sneakerModel) return;
-  const baseScale = 15;
-  const scaleAdjustment = 0.2;
-  const defaultSize = 40;
-  const newScale = baseScale + (selectedSize - defaultSize) * scaleAdjustment;
-  sneakerModel.scale.set(newScale, newScale, newScale);
-});
+// const shoeSizeInput = document.getElementById("shoe-size");
+// shoeSizeInput.addEventListener("change", () => {
+//   const selectedSize = parseInt(shoeSizeInput.value, 10);
+//   if (!sneakerModel) return;
+//   const baseScale = 15;
+//   const scaleAdjustment = 0.2;
+//   const defaultSize = 40;
+//   const newScale = baseScale + (selectedSize - defaultSize) * scaleAdjustment;
+//   sneakerModel.scale.set(newScale, newScale, newScale);
+// });
 
-function changeLaces(color) { 
+// Change Laces Color
+function changeLaces(color) {
   if (sneakerModel) {
     sneakerModel.traverse((child) => {
       if (child.isMesh && child.material.name === "mat_laces") {
@@ -127,6 +129,7 @@ function changeLaces(color) {
   }
 }
 
+// Change Sole Color
 function changeSoles(color) {
   if (sneakerModel) {
     sneakerModel.traverse((child) => {
@@ -137,6 +140,33 @@ function changeSoles(color) {
       ) {
         child.material.color.set(color);
         console.log(`Sole color changed to ${color}`);
+      }
+    });
+  }
+}
+
+function changeTongue(color) {
+  if (sneakerModel) {
+    sneakerModel.traverse((child) => {
+      if (child.isMesh && child.material.name === "inside") {
+        child.material.color.set(color);
+        console.log(`Tongue color changed to ${color}`);
+      }
+    });
+  }
+}
+
+// Change Tip Color
+function changeTip(color) {
+  if (sneakerModel) {
+    sneakerModel.traverse((child) => {
+      if (
+        child.isMesh &&
+        (child.material.name === "mat_outside_1" ||
+          child.material.name === "mat_outside_2" || child.material.name === "mat_outside_3")
+      ){
+        child.material.color.set(color);
+        console.log(`Tip color changed to ${color}`);
       }
     });
   }
@@ -156,14 +186,79 @@ document.querySelectorAll("#sole-colors .color-square").forEach((square) => {
   });
 });
 
+document.querySelectorAll("#tongue-colors .color-square").forEach((square) => {
+  square.addEventListener("click", () => {
+    const color = square.getAttribute("data-color");
+    changeTongue(color);
+  });
+});
+
+document.querySelectorAll("#tip-colors .color-square").forEach((square) => {
+  square.addEventListener("click", () => {
+    const color = square.getAttribute("data-color");
+    changeTip(color);
+  });
+});
+
+// Switch Steps Logic
+document.addEventListener("DOMContentLoaded", () => {
+  const lacesStep = document.getElementById("step-laces");
+  const soleStep = document.getElementById("step-sole");
+  const tongueStep = document.getElementById("step-tongue");
+  const stitchingStep = document.getElementById("step-tip");
+
+  const nextToSole = document.getElementById("next-to-sole");
+  const backToLaces = document.getElementById("back-to-laces");
+  const nextToTongue = document.getElementById("next-to-tongue");
+  const backToSole = document.getElementById("back-to-sole");
+  const nextToTip = document.getElementById("next-to-tip");
+  const backToTongue = document.getElementById("back-to-tongue");
+
+  // Helper function to switch steps
+  const switchStep = (currentStep, nextStep) => {
+    currentStep.classList.add("hidden");
+    nextStep.classList.remove("hidden");
+  };
+
+  // Navigate to Sole Colors
+  nextToSole?.addEventListener("click", () => {
+    switchStep(lacesStep, soleStep);
+  });
+
+  // Back to Laces Colors
+  backToLaces?.addEventListener("click", () => {
+    switchStep(soleStep, lacesStep);
+  });
+
+  // Navigate to Tongue Colors
+  nextToTongue?.addEventListener("click", () => {
+    switchStep(soleStep, tongueStep);
+  });
+
+  // Back to Sole Colors
+  backToSole?.addEventListener("click", () => {
+    switchStep(tongueStep, soleStep);
+  });
+
+  // Navigate to Tip Colors
+  nextToTip?.addEventListener("click", () => {
+    switchStep(tongueStep, stitchingStep);
+  });
+
+  // Back to Tongue Colors
+  backToTongue?.addEventListener("click", () => {
+    switchStep(stitchingStep, tongueStep);
+  });
+});
+
+// Animation Loop
 const animate = () => {
   requestAnimationFrame(animate);
   controls.update();
   renderer.render(scene, camera);
 };
 
-animate();
-
+// Handle Resizing
 window.addEventListener("resize", () => {
   const innerWidth = window.innerWidth - 350;
   const innerHeight = window.innerHeight;
@@ -171,3 +266,6 @@ window.addEventListener("resize", () => {
   camera.updateProjectionMatrix();
   renderer.setSize(innerWidth, innerHeight);
 });
+
+// Start Animation
+animate();
