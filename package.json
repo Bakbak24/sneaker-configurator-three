@@ -14,6 +14,7 @@
   "dependencies": {
     "dat.gui": "^0.7.9",
     "gsap": "^3.12.5",
-    "three": "^0.170.0"
+    "three": "^0.170.0",
+    "troika-three-text": "^0.52.2"
   }
 }
