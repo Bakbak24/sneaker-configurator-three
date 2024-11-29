@@ -227,17 +227,48 @@ function setupMaterialEventListeners(partNames, containerId) {
     });
 }
 
-function resetMaterials() {
+function resetMaterialForPart(partNames) {
   if (!sneakerModel) return;
 
+  const parts = Array.isArray(partNames) ? partNames : [partNames];
+
   sneakerModel.traverse((child) => {
-    if (child.isMesh && defaultMaterials[child.material.name]) {
-      child.material = defaultMaterials[child.material.name].clone();
+    if (child.isMesh && parts.includes(child.material.name)) {
+      child.material.map = null;
+      child.material.normalMap = null;
+      child.material.roughnessMap = null;
+      child.material.roughness = 1;
       child.material.needsUpdate = true;
+
+      console.log(`Material reset for ${child.material.name}`);
     }
   });
-  console.log("Materials reset to default.");
 }
+
+document
+  .querySelector(".reset-laces-button")
+  .addEventListener("click", () => {
+    resetMaterialForPart("mat_laces");
+  });
+
+document
+  .querySelector(".reset-sole-button")
+  .addEventListener("click", () => {
+    resetMaterialForPart(["mat_sole_top", "mat_sole_bottom"]);
+  });
+
+document
+  .querySelector(".reset-tongue-button")
+  .addEventListener("click", () => {
+    resetMaterialForPart("inside");
+  });
+
+document
+  .querySelector(".reset-tip-button")
+  .addEventListener("click", () => {
+    resetMaterialForPart(["mat_outside_1", "mat_outside_2", "mat_outside_3"]);
+  });
+
 
 document
   .getElementById("reset-materials-button")
@@ -259,8 +290,16 @@ setupMaterialEventListeners(
   "tip-material-options"
 );
 
+let currentLogo = null;
 function addLogo(uploadedImage) {
   if (!sneakerModel || !uploadedImage) return;
+
+  if (currentLogo) {
+    sneakerGroup.remove(currentLogo);
+    currentLogo.geometry.dispose();
+    currentLogo.material.dispose();
+    currentLogo = null;
+  }
 
   const cylinderGeometry = new THREE.CylinderGeometry(0.5, 0.5, 0.1, 32);
   const textureLoader = new THREE.TextureLoader();
@@ -294,6 +333,10 @@ function addLogo(uploadedImage) {
   cylinder.position.set(-0.6, 0.2, 0);
   cylinder.rotation.x = 0;
   sneakerGroup.add(cylinder);
+  currentLogo = cylinder;
+  updateSidebarPreview(imageURL);
+  console.log("New Logo toegevoegd");
+  
 
   const logoFolder = gui.addFolder("Logo Settings");
   logoFolder.add(cylinder.position, "x", -10, 10, 0.1).name("Logo X");
@@ -319,6 +362,19 @@ document
       addLogo(uploadedImage);
     }
 });
+
+function updateSidebarPreview(imageURL) {
+  const sidebarPreview = document.getElementById("logo-preview");
+  if (!sidebarPreview) {
+    console.warn("Logo preview element not found.");
+    return;
+  }
+
+  sidebarPreview.style.backgroundImage = `url('${imageURL}')`;
+  sidebarPreview.style.backgroundSize = "contain";
+  sidebarPreview.style.backgroundRepeat = "no-repeat";
+  sidebarPreview.style.backgroundPosition = "center";
+}
 
 function addCustomText(text) {
   if (!sneakerModel || !text) return;
