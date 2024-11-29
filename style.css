@@ -59,7 +59,6 @@ canvas {
   transform: translateX(100%);
 }
 
-
 .config-sidebar h2 {
   font-size: 20px;
   margin-bottom: 20px;
@@ -200,21 +199,6 @@ select#extra-option option {
   transform: scale(1.1);
 }
 
-.material-options {
-  display: flex;
-  gap: 10px;
-  justify-content: center;
-}
-
-.material-button {
-  padding: 10px 20px;
-  border: none;
-  background-color: #222;
-  color: #fff;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
 .material-button:hover {
   background-color: #fff;
   color: #000;
@@ -245,6 +229,41 @@ button#apply-text-button:hover {
   border: 1px solid #fff;
 }
 
+#reset-materials-button {
+  position: relative;
+  width: 40px;
+  height: 43px;
+  cursor: pointer;
+  border: 2px solid transparent;
+  background-color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.3s ease;
+}
+
+#reset-materials-button:hover {
+  transform: scale(1.1);
+}
+
+#reset-materials-button::before {
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 2px;
+  background-color: #ff0000;
+  transform: rotate(45deg);
+}
+
+#reset-materials-button::after {
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 2px;
+  background-color: #ff0000;
+  transform: rotate(-45deg);
+}
+
 .material-options {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
@@ -263,6 +282,8 @@ button#apply-text-button:hover {
   background-position: center;
   transition: border 0.3s ease;
   color: transparent;
+  padding: 10px 20px;
+  background-color: #222;
 }
 
 .material-button:hover {
@@ -289,7 +310,6 @@ button#apply-text-button:hover {
   opacity: 1;
   transform: translateX(-50%) translateY(5px);
 }
-
 
 .leather-black {
   background-image: url("/assets/textures/materials/leather/black_leather_color.jpg");
@@ -318,7 +338,7 @@ button#apply-text-button:hover {
 #upload-logo-section {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 15px;
   margin-top: 20px;
 }
 
@@ -329,11 +349,35 @@ button#apply-text-button:hover {
   border: 2px dashed #fff;
   cursor: pointer;
   transition: all 0.3s ease;
+  text-align: center;
 }
 
 #upload-logo-button:hover {
   background-color: #fff;
   color: #000;
+}
+
+#logo-preview-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: center;
+}
+
+#logo-preview-box {
+  width: 100%;
+  height: 35vh;
+  border: 2px dashed #fff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #222;
+}
+
+#logo-preview {
+  max-width: 90%;
+  max-height: 90%;
+  display: none;
 }
 
 #done-section {
@@ -436,9 +480,9 @@ button#apply-text-button:hover {
   transform: translate(-50%, -50%);
   padding: 20px 40px;
   font-size: 18px;
-  background-color: #000;
-  color: #fff;
-  border-radius: 10px;
+  font-weight: bold;
+  background-color: rgb(105, 255, 71);
+  color: black;
   box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.3);
   opacity: 0;
   visibility: hidden;
@@ -476,4 +520,3 @@ button#apply-text-button:hover {
     transform: rotate(360deg);
   }
 }
-

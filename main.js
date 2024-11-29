@@ -71,6 +71,9 @@ dracoLoader.setDecoderPath(
 const loader = new GLTFLoader();
 loader.setDRACOLoader(dracoLoader);
 
+let defaultMaterials = {};
+let sneakerGroup = new THREE.Group();
+
 let sneakerModel;
 loader.load(
   "/assets/Shoe_compressed.glb",
@@ -84,9 +87,12 @@ loader.load(
       if (node.isMesh) {
         console.log("Mesh gevonden:", node.name);
         node.castShadow = true;
+        defaultMaterials[node.material.name] = node.material.clone();
       }
     });
-    scene.add(sneakerModel);
+
+    sneakerGroup.add(sneakerModel);
+    scene.add(sneakerGroup);
   },
   undefined,
   (error) => {
@@ -221,6 +227,24 @@ function setupMaterialEventListeners(partNames, containerId) {
     });
 }
 
+function resetMaterials() {
+  if (!sneakerModel) return;
+
+  sneakerModel.traverse((child) => {
+    if (child.isMesh && defaultMaterials[child.material.name]) {
+      child.material = defaultMaterials[child.material.name].clone();
+      child.material.needsUpdate = true;
+    }
+  });
+  console.log("Materials reset to default.");
+}
+
+document
+  .getElementById("reset-materials-button")
+  .addEventListener("click", () => {
+    resetMaterials();
+  });
+
 setupMaterialEventListeners("mat_laces", "laces-material-options");
 
 setupMaterialEventListeners(
@@ -242,6 +266,11 @@ function addLogo(uploadedImage) {
   const textureLoader = new THREE.TextureLoader();
 
   const imageURL = URL.createObjectURL(uploadedImage);
+
+  const logoPreview = document.getElementById("logo-preview");
+  logoPreview.src = imageURL;
+  logoPreview.style.display = "block";
+
   const logoTexture = textureLoader.load(
     imageURL,
     (texture) => {
@@ -264,7 +293,7 @@ function addLogo(uploadedImage) {
 
   cylinder.position.set(-0.6, 0.2, 0);
   cylinder.rotation.x = 0;
-  scene.add(cylinder);
+  sneakerGroup.add(cylinder);
 
   const logoFolder = gui.addFolder("Logo Settings");
   logoFolder.add(cylinder.position, "x", -10, 10, 0.1).name("Logo X");
@@ -289,7 +318,7 @@ document
     if (uploadedImage) {
       addLogo(uploadedImage);
     }
-  });
+});
 
 function addCustomText(text) {
   if (!sneakerModel || !text) return;
@@ -315,7 +344,7 @@ function addCustomText(text) {
   textMesh.material = textMaterial;
 
   textMesh.sync();
-  scene.add(textMesh);
+  sneakerGroup.add(textMesh);
   console.log(`Gebogen tekst toegevoegd: ${text}`);
 }
 
@@ -440,30 +469,7 @@ function playGlowEffect() {
     glowMaterial.emissiveIntensity = intensity;
     requestAnimationFrame(animateGlow);
   };
-
   animateGlow();
-
-  setTimeout(() => {
-    isAnimating = false;
-    let fadeOutIntensity = glowMaterial.emissiveIntensity;
-
-    const fadeOut = () => {
-      fadeOutIntensity -= 0.02;
-      if (fadeOutIntensity > 0) {
-        glowMaterial.emissiveIntensity = fadeOutIntensity;
-        requestAnimationFrame(fadeOut);
-      } else {
-        sneakerModel.traverse((child) => {
-          if (child.isMesh) {
-            child.material = child.originalMaterial;
-            child.originalMaterial = null;
-          }
-        });
-      }
-    };
-
-    fadeOut();
-  }, 5000);
 }
 
 const updateCanvasSize = (isSidebarVisible) => {
@@ -546,14 +552,15 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   const rotateShoe = () => {
-    gsap.to(sneakerModel.rotation, {
+    gsap.to(sneakerGroup.rotation, {
       y: "+=6.28",
       duration: 4,
       ease: "linear",
       repeat: -1,
     });
     gsap.to(camera.position, {
-      z: -5,
+      z: -4.3,
+      y: 3.8,
       duration: 1,
       ease: "linear",
     });
@@ -587,7 +594,7 @@ document.addEventListener("DOMContentLoaded", () => {
       gsap.fromTo(
         popup,
         { y: "-100px", opacity: 0, visibility: "visible" },
-        { y: "0px", opacity: 1, duration: 1.5, ease: "power2.out" }
+        { y: "-50px", opacity: 1, duration: 1.5, ease: "power2.out" }
       );
 
       setTimeout(() => {
@@ -624,7 +631,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }, 1000);
   });
 });
-
 
 // Animation Loop
 const animate = () => {

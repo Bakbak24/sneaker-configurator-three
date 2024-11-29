@@ -9,7 +9,7 @@
   <body>
     <div id="loading-screen">
       <div class="spinner"></div>
-    </div>    
+    </div>
     <div id="gui-container"></div>
     <div id="configurator" class="config-sidebar">
       <div class="logo-container">
@@ -196,6 +196,7 @@
               data-material="leatherRedish"
               aria-label="Redish Leather"
             ></button>
+            <button id="reset-materials-button" aria-label="Reset"></button>
           </div>
         </div>
 
@@ -392,6 +393,7 @@
               data-material="leatherRedish"
               aria-label="Redish Leather"
             ></button>
+            <button id="reset-materials-button" aria-label="Reset"></button>
           </div>
         </div>
 
@@ -588,6 +590,7 @@
               data-material="leatherRedish"
               aria-label="Redish Leather"
             ></button>
+            <button id="reset-materials-button" aria-label="Reset"></button>
           </div>
         </div>
 
@@ -784,6 +787,7 @@
               data-material="leatherRedish"
               aria-label="Redish Leather"
             ></button>
+            <button id="reset-materials-button" aria-label="Reset"></button>
           </div>
         </div>
 
@@ -823,6 +827,12 @@
           <div id="upload-logo-section">
             <h3>Upload Your Logo</h3>
             <input type="file" id="upload-logo-button" accept="image/*" />
+            <div id="logo-preview-container">
+              <h3>Logo Preview:</h3>
+              <div id="logo-preview-box">
+                <img id="logo-preview" alt="Your Logo" style="display: none" />
+              </div>
+            </div>
           </div>
         </div>
 
