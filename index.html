@@ -7,6 +7,9 @@
     <link rel="stylesheet" href="./style.css" />
   </head>
   <body>
+    <div id="loading-screen">
+      <div class="spinner"></div>
+    </div>    
     <div id="gui-container"></div>
     <div id="configurator" class="config-sidebar">
       <div class="logo-container">
@@ -920,7 +923,6 @@
               <option value="49">49</option>
               <option value="50">50</option>
             </select>
-
             <button type="submit" id="order-button" class="hidden">
               Order
             </button>
@@ -931,6 +933,8 @@
         </div>
       </div>
     </div>
+    <div id="order-confirmation">🎉Order has been placed!🎉</div>
+    <button id="create-new-shoe" class="hidden">Create New Shoe</button>
     <canvas id="three-canvas"></canvas>
     <script type="module" src="./main.js"></script>
   </body>

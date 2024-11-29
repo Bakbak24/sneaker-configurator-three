@@ -4,6 +4,7 @@ import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import { DRACOLoader } from "three/examples/jsm/loaders/DRACOLoader";
 import { GUI } from "dat.gui";
 import { Text } from "troika-three-text";
+import { gsap } from "gsap";
 
 console.log("Script gestart");
 
@@ -404,6 +405,77 @@ document.querySelectorAll("#tip-colors .color-square").forEach((square) => {
   });
 });
 
+function playGlowEffect() {
+  if (!sneakerModel) return;
+
+  const glowMaterial = new THREE.MeshStandardMaterial({
+    emissive: 0xffa500, // orange
+    emissiveIntensity: 0.5,
+    roughness: 0.3,
+    metalness: 0.6,
+  });
+
+  sneakerModel.traverse((child) => {
+    if (child.isMesh) {
+      child.originalMaterial = child.material;
+      child.material = glowMaterial;
+    }
+  });
+
+  let intensity = 0.5;
+  let growing = true;
+  let isAnimating = true;
+
+  const animateGlow = () => {
+    if (!isAnimating) return;
+
+    if (growing) {
+      intensity += 0.01;
+      if (intensity > 1.2) growing = false;
+    } else {
+      intensity -= 0.01;
+      if (intensity < 0.5) growing = true;
+    }
+
+    glowMaterial.emissiveIntensity = intensity;
+    requestAnimationFrame(animateGlow);
+  };
+
+  animateGlow();
+
+  setTimeout(() => {
+    isAnimating = false;
+    let fadeOutIntensity = glowMaterial.emissiveIntensity;
+
+    const fadeOut = () => {
+      fadeOutIntensity -= 0.02;
+      if (fadeOutIntensity > 0) {
+        glowMaterial.emissiveIntensity = fadeOutIntensity;
+        requestAnimationFrame(fadeOut);
+      } else {
+        sneakerModel.traverse((child) => {
+          if (child.isMesh) {
+            child.material = child.originalMaterial;
+            child.originalMaterial = null;
+          }
+        });
+      }
+    };
+
+    fadeOut();
+  }, 5000);
+}
+
+const updateCanvasSize = (isSidebarVisible) => {
+  const sidebarWidth = isSidebarVisible ? 350 : 0;
+  const innerWidth = window.innerWidth - sidebarWidth;
+  const innerHeight = window.innerHeight;
+
+  camera.aspect = innerWidth / innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(innerWidth, innerHeight);
+};
+
 // Switch Steps Logic
 document.addEventListener("DOMContentLoaded", () => {
   const lacesStep = document.getElementById("step-laces");
@@ -430,6 +502,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const doneButton = document.getElementById("done-button");
   const doneSection = document.getElementById("done-section");
+  const createNewShoeButton = document.getElementById("create-new-shoe");
 
   const switchStep = (currentStep, nextStep) => {
     document.querySelectorAll(".config-step").forEach((step) => {
@@ -472,22 +545,86 @@ document.addEventListener("DOMContentLoaded", () => {
     switchStep(null, orderStep);
   });
 
-  document.getElementById("order-form-container").addEventListener("submit", (e) => {
-    e.preventDefault();
+  const rotateShoe = () => {
+    gsap.to(sneakerModel.rotation, {
+      y: "+=6.28",
+      duration: 4,
+      ease: "linear",
+      repeat: -1,
+    });
+    gsap.to(camera.position, {
+      z: -5,
+      duration: 1,
+      ease: "linear",
+    });
+  };
 
-    const name = document.getElementById("name").value;
-    const email = document.getElementById("email").value;
-    const shoeSize = document.getElementById("shoe-size").value;
+  document
+    .getElementById("order-form-container")
+    .addEventListener("submit", (e) => {
+      e.preventDefault();
 
-    console.log(`Order submitted! Name: ${name}, Email: ${email}, Shoe Size: ${shoeSize}`);
+      const name = document.getElementById("name").value;
+      const email = document.getElementById("email").value;
+      const shoeSize = document.getElementById("shoe-size").value;
+
+      console.log(
+        `Order submitted! Name: ${name}, Email: ${email}, Shoe Size: ${shoeSize}`
+      );
+      playGlowEffect();
+      const sidebar = document.querySelector(".config-sidebar");
+      sidebar.classList.add("hide-sidebar");
+      updateCanvasSize(false);
+      rotateShoe();
+      createNewShoeButton.classList.remove("hidden");
+      createNewShoeButton.classList.add("show");
+      gsap.fromTo(
+        createNewShoeButton,
+        { bottom: "-200px", opacity: 0 },
+        { bottom: "80px", opacity: 1, duration: 2, ease: "power2.out" }
+      );
+      const popup = document.getElementById("order-confirmation");
+      gsap.fromTo(
+        popup,
+        { y: "-100px", opacity: 0, visibility: "visible" },
+        { y: "0px", opacity: 1, duration: 1.5, ease: "power2.out" }
+      );
+
+      setTimeout(() => {
+        gsap.to(popup, {
+          y: "-100px",
+          opacity: 0,
+          duration: 0.5,
+          ease: "power2.in",
+          onComplete: () => {
+            popup.style.visibility = "hidden";
+          },
+        });
+      }, 3000);
+    });
+  createNewShoeButton.addEventListener("click", () => {
+    location.reload();
   });
-
-  const innerWidth = window.innerWidth - 350;
-  const innerHeight = window.innerHeight;
-  camera.aspect = innerWidth / innerHeight;
-  camera.updateProjectionMatrix();
-  renderer.setSize(innerWidth, innerHeight);
+  updateCanvasSize(true);
 });
+
+document.addEventListener("DOMContentLoaded", () => {
+  const loadingScreen = document.getElementById("loading-screen");
+
+  window.addEventListener("load", () => {
+    setTimeout(() => {
+      gsap.to(loadingScreen, {
+        opacity: 0,
+        duration: 0.5,
+        ease: "power2.out",
+        onComplete: () => {
+          loadingScreen.style.display = "none";
+        },
+      });
+    }, 1000);
+  });
+});
+
 
 // Animation Loop
 const animate = () => {

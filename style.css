@@ -3,6 +3,7 @@ body {
   overflow: hidden;
   font-family: Arial, sans-serif;
   display: flex;
+  transition: all 0.3s ease;
 }
 
 #configurator {
@@ -51,7 +52,13 @@ canvas {
   gap: 20px;
   box-shadow: -5px 0 10px rgba(0, 0, 0, 0.5);
   z-index: 10;
+  transition: transform 1s ease-in-out;
 }
+
+.config-sidebar.hide-sidebar {
+  transform: translateX(100%);
+}
+
 
 .config-sidebar h2 {
   font-size: 20px;
@@ -391,3 +398,82 @@ button#apply-text-button:hover {
   color: #fff;
   border: 1px solid #fff;
 }
+
+#create-new-shoe {
+  position: fixed;
+  bottom: -50px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 15px 30px;
+  font-size: 16px;
+  background-color: #000;
+  color: #fff;
+  font-weight: bold;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s ease;
+  z-index: 20;
+}
+
+#create-new-shoe:hover {
+  background-color: #fff;
+  color: #000;
+}
+
+#create-new-shoe.show {
+  bottom: 30px;
+}
+
+#create-new-shoe.hidden {
+  display: none;
+}
+
+#order-confirmation {
+  position: fixed;
+  top: 20%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 20px 40px;
+  font-size: 18px;
+  background-color: #000;
+  color: #fff;
+  border-radius: 10px;
+  box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.3);
+  opacity: 0;
+  visibility: hidden;
+  z-index: 30;
+}
+
+#loading-screen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: #000;
+  color: #fff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.spinner {
+  border: 8px solid #f3f3f3;
+  border-top: 8px solid gray;
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
