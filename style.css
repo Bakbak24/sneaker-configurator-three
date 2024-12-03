@@ -108,6 +108,10 @@ canvas {
   border: 2px solid #fff;
 }
 
+.color-square.active {
+  border: 2px solid #fff;
+}
+
 .apply-button {
   background-color: #fff;
   color: #000;
@@ -212,6 +216,10 @@ textarea#custom-text-input {
   border: 1px solid #fff;
   background-color: #222;
   color: #fff;
+}
+
+textarea#custom-text-input:focus {
+  outline: none;
 }
 
 button#apply-text-button {

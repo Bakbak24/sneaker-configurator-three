@@ -19,7 +19,7 @@ const camera = new THREE.PerspectiveCamera(
   0.1,
   1000
 );
-camera.position.set(0.1, 1.2, -4.1);
+camera.position.set(2.5, 4.5, 0);
 
 // Initialize Renderer
 const renderer = new THREE.WebGLRenderer({
@@ -99,6 +99,37 @@ loader.load(
     console.error("Error loading model:", error);
   }
 );
+
+const cameraPositions = {
+  laces: { position: { x: 2.5, y: 4.5, z: 0 }, rotation: { x: 0, y: 0, z: 0 } },
+  sole: { position: { x: 0.1, y: 1.2, z: -4.1 }, rotation: { x: 0, y: 0, z: 0 } },
+  tongue: { position: { x: -2.1, y: 4.5, z: 0 }, rotation: { x: 0, y: 0, z: 0 } },
+  tip: { position: { x: 1.2, y: 3.1, z: -3.2 }, rotation: { x: 0, y: 0, z: 0 } },
+  logo: { position: { x: -0.4, y: 4.5, z: 0 }, rotation: { x: 0, y: 0, z: 0 } },
+  text: { position: { x: -3.2, y: 1.6, z: -0.2 }, rotation: { x: 0, y: 0, z: 0 } }
+};
+
+function animateCamera(target) {
+  const { position, rotation } = cameraPositions[target];
+  
+  gsap.to(camera.position, {
+    x: position.x,
+    y: position.y,
+    z: position.z,
+    duration: 1.5,
+    ease: "power3.out",
+  });
+
+  gsap.to(camera.rotation, {
+    x: rotation.x,
+    y: rotation.y,
+    z: rotation.z,
+    duration: 1.5,
+    ease: "power3.out",
+  });
+
+  console.log(`Camera moved to ${target}`);
+}
 
 const gui = new GUI({ autoPlace: false });
 document.getElementById("gui-container").appendChild(gui.domElement);
@@ -269,7 +300,6 @@ document
     resetMaterialForPart(["mat_outside_1", "mat_outside_2", "mat_outside_3"]);
   });
 
-
 document
   .getElementById("reset-materials-button")
   .addEventListener("click", () => {
@@ -369,15 +399,23 @@ function updateSidebarPreview(imageURL) {
     console.warn("Logo preview element not found.");
     return;
   }
-
   sidebarPreview.style.backgroundImage = `url('${imageURL}')`;
   sidebarPreview.style.backgroundSize = "contain";
   sidebarPreview.style.backgroundRepeat = "no-repeat";
   sidebarPreview.style.backgroundPosition = "center";
 }
 
+let currentTextMesh = null;
+
 function addCustomText(text) {
   if (!sneakerModel || !text) return;
+
+  if (currentTextMesh) {
+    sneakerGroup.remove(currentTextMesh);
+    currentTextMesh.geometry.dispose();
+    currentTextMesh.material.dispose();
+    currentTextMesh = null;
+  }
 
   const textMesh = new Text();
   textMesh.text = text;
@@ -401,13 +439,41 @@ function addCustomText(text) {
 
   textMesh.sync();
   sneakerGroup.add(textMesh);
+  currentTextMesh = textMesh;
+  updateTextPreview(text);
+
   console.log(`Gebogen tekst toegevoegd: ${text}`);
 }
 
 document.getElementById("apply-text-button").addEventListener("click", () => {
-  const text = document.getElementById("custom-text-input").value;
+  let text = document.getElementById("custom-text-input").value.trim();
+  if (text.length > 6) {
+    alert("Text cannot be longer than 6 characters.");
+    return;
+  }
+  text = text.toUpperCase();
   addCustomText(text);
+  document.getElementById("custom-text-input").value = "";
 });
+
+const colorSquares = document.querySelectorAll(".color-square");
+colorSquares.forEach((square) => {
+  square.addEventListener("click", () => {
+    colorSquares.forEach((sq) => sq.classList.remove("active"));
+    square.classList.add("active");
+  });
+});
+
+
+function updateTextPreview(text) {
+  const textPreview = document.getElementById("text-preview");
+  if (!textPreview) {
+    console.warn("Text preview element not found.");
+    return;
+  }
+
+  textPreview.textContent = text;
+}
 
 function changeLaces(color) {
   if (sneakerModel) {
@@ -566,11 +632,17 @@ document.addEventListener("DOMContentLoaded", () => {
   const doneSection = document.getElementById("done-section");
   const createNewShoeButton = document.getElementById("create-new-shoe");
 
-  const switchStep = (currentStep, nextStep) => {
+  // Updated switchStep function with camera animations
+  const switchStep = (currentStep, nextStep, cameraTarget = null) => {
     document.querySelectorAll(".config-step").forEach((step) => {
       step.classList.add("hidden");
     });
     nextStep.classList.remove("hidden");
+
+    if (cameraTarget) {
+      animateCamera(cameraTarget);
+    }
+
     if (nextStep === orderStep) {
       doneSection.classList.add("hidden");
       document.getElementById("order-button").classList.remove("hidden");
@@ -580,31 +652,45 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   };
 
-  // Navigation logic
-  nextToSole?.addEventListener("click", () => switchStep(lacesStep, soleStep));
-  backToLaces?.addEventListener("click", () => switchStep(soleStep, lacesStep));
-  nextToTongue?.addEventListener("click", () =>
-    switchStep(soleStep, tongueStep)
+  // Navigation logic with camera targets
+  nextToSole?.addEventListener("click", () =>
+    switchStep(lacesStep, soleStep, "sole")
   );
-  backToSole?.addEventListener("click", () => switchStep(tongueStep, soleStep));
+  backToLaces?.addEventListener("click", () =>
+    switchStep(soleStep, lacesStep, "laces")
+  );
+  nextToTongue?.addEventListener("click", () =>
+    switchStep(soleStep, tongueStep, "tongue")
+  );
+  backToSole?.addEventListener("click", () =>
+    switchStep(tongueStep, soleStep, "sole")
+  );
   nextToTip?.addEventListener("click", () =>
-    switchStep(tongueStep, stitchingStep)
+    switchStep(tongueStep, stitchingStep, "tip")
   );
   backToTongue?.addEventListener("click", () =>
-    switchStep(stitchingStep, tongueStep)
+    switchStep(stitchingStep, tongueStep, "tongue")
   );
   nextToLogo?.addEventListener("click", () =>
-    switchStep(stitchingStep, logoStep)
+    switchStep(stitchingStep, logoStep, "logo")
   );
   backToTip?.addEventListener("click", () =>
-    switchStep(logoStep, stitchingStep)
+    switchStep(logoStep, stitchingStep, "tip")
   );
-  backToLogo?.addEventListener("click", () => switchStep(textStep, logoStep));
-  nextToText?.addEventListener("click", () => switchStep(logoStep, textStep));
-  backToText?.addEventListener("click", () => switchStep(orderStep, textStep));
-  nextToOrder?.addEventListener("click", () => switchStep(textStep, orderStep));
+  backToLogo?.addEventListener("click", () =>
+    switchStep(textStep, logoStep, "logo")
+  );
+  nextToText?.addEventListener("click", () =>
+    switchStep(logoStep, textStep, "text")
+  );
+  backToText?.addEventListener("click", () =>
+    switchStep(orderStep, textStep, "text")
+  );
+  nextToOrder?.addEventListener("click", () =>
+    switchStep(textStep, orderStep, null)
+  );
   doneButton.addEventListener("click", () => {
-    switchStep(null, orderStep);
+    switchStep(null, orderStep, null);
   });
 
   const rotateShoe = () => {
@@ -665,6 +751,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
       }, 3000);
     });
+
   createNewShoeButton.addEventListener("click", () => {
     location.reload();
   });
