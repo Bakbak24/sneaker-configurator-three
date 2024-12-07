@@ -102,16 +102,28 @@ loader.load(
 
 const cameraPositions = {
   laces: { position: { x: 2.5, y: 4.5, z: 0 }, rotation: { x: 0, y: 0, z: 0 } },
-  sole: { position: { x: 0.1, y: 1.2, z: -4.1 }, rotation: { x: 0, y: 0, z: 0 } },
-  tongue: { position: { x: -2.1, y: 4.5, z: 0 }, rotation: { x: 0, y: 0, z: 0 } },
-  tip: { position: { x: 1.2, y: 3.1, z: -3.2 }, rotation: { x: 0, y: 0, z: 0 } },
+  sole: {
+    position: { x: 0.1, y: 1.2, z: -4.1 },
+    rotation: { x: 0, y: 0, z: 0 },
+  },
+  tongue: {
+    position: { x: -2.1, y: 4.5, z: 0 },
+    rotation: { x: 0, y: 0, z: 0 },
+  },
+  tip: {
+    position: { x: 1.2, y: 3.1, z: -3.2 },
+    rotation: { x: 0, y: 0, z: 0 },
+  },
   logo: { position: { x: -0.4, y: 4.5, z: 0 }, rotation: { x: 0, y: 0, z: 0 } },
-  text: { position: { x: -3.2, y: 1.6, z: -0.2 }, rotation: { x: 0, y: 0, z: 0 } }
+  text: {
+    position: { x: -3.2, y: 1.6, z: -0.2 },
+    rotation: { x: 0, y: 0, z: 0 },
+  },
 };
 
 function animateCamera(target) {
   const { position, rotation } = cameraPositions[target];
-  
+
   gsap.to(camera.position, {
     x: position.x,
     y: position.y,
@@ -240,6 +252,9 @@ function applyMaterialToPart(partNames, materialKey) {
       child.material.roughness = selectedMaterial.roughness || 1;
       child.material.needsUpdate = true;
 
+      // Voegt de naam van het materiaal toe aan het mesh-object
+      child.material.selectedMaterialKey = materialKey;
+
       console.log(
         `Material applied to ${child.material.name} using ${materialKey}`
       );
@@ -276,29 +291,21 @@ function resetMaterialForPart(partNames) {
   });
 }
 
-document
-  .querySelector(".reset-laces-button")
-  .addEventListener("click", () => {
-    resetMaterialForPart("mat_laces");
-  });
+document.querySelector(".reset-laces-button").addEventListener("click", () => {
+  resetMaterialForPart("mat_laces");
+});
 
-document
-  .querySelector(".reset-sole-button")
-  .addEventListener("click", () => {
-    resetMaterialForPart(["mat_sole_top", "mat_sole_bottom"]);
-  });
+document.querySelector(".reset-sole-button").addEventListener("click", () => {
+  resetMaterialForPart(["mat_sole_top", "mat_sole_bottom"]);
+});
 
-document
-  .querySelector(".reset-tongue-button")
-  .addEventListener("click", () => {
-    resetMaterialForPart("inside");
-  });
+document.querySelector(".reset-tongue-button").addEventListener("click", () => {
+  resetMaterialForPart("inside");
+});
 
-document
-  .querySelector(".reset-tip-button")
-  .addEventListener("click", () => {
-    resetMaterialForPart(["mat_outside_1", "mat_outside_2", "mat_outside_3"]);
-  });
+document.querySelector(".reset-tip-button").addEventListener("click", () => {
+  resetMaterialForPart(["mat_outside_1", "mat_outside_2", "mat_outside_3"]);
+});
 
 document
   .getElementById("reset-materials-button")
@@ -366,7 +373,6 @@ function addLogo(uploadedImage) {
   currentLogo = cylinder;
   updateSidebarPreview(imageURL);
   console.log("New Logo toegevoegd");
-  
 
   const logoFolder = gui.addFolder("Logo Settings");
   logoFolder.add(cylinder.position, "x", -10, 10, 0.1).name("Logo X");
@@ -391,7 +397,7 @@ document
     if (uploadedImage) {
       addLogo(uploadedImage);
     }
-});
+  });
 
 function updateSidebarPreview(imageURL) {
   const sidebarPreview = document.getElementById("logo-preview");
@@ -463,7 +469,6 @@ colorSquares.forEach((square) => {
     square.classList.add("active");
   });
 });
-
 
 function updateTextPreview(text) {
   const textPreview = document.getElementById("text-preview");
@@ -632,7 +637,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const doneSection = document.getElementById("done-section");
   const createNewShoeButton = document.getElementById("create-new-shoe");
 
-  // Updated switchStep function with camera animations
+  // SwitchStep function with camera animations
   const switchStep = (currentStep, nextStep, cameraTarget = null) => {
     document.querySelectorAll(".config-step").forEach((step) => {
       step.classList.add("hidden");
@@ -775,14 +780,92 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 });
 
-// Animation Loop
+document
+  .getElementById("order-form-container")
+  .addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const customerName = document.getElementById("name").value;
+    const customerEmail = document.getElementById("email").value;
+    const shoeSize = parseFloat(document.getElementById("shoe-size").value);
+
+    const laceDetails = getSelectedDetails("mat_laces");
+    const soleDetails = getSelectedDetails(["mat_sole_top", "mat_sole_bottom"]);
+    const tongueDetails = getSelectedDetails("inside");
+    const tipDetails = getSelectedDetails([
+      "mat_outside_1",
+      "mat_outside_2",
+      "mat_outside_3",
+    ]);
+
+    const extraOptions = {
+      logo: currentLogo ? currentLogo.material.map.image.src : null,
+      customText: currentTextMesh ? currentTextMesh.text : null,
+    };
+
+    const payload = {
+      customerName,
+      customerEmail,
+      shoeSize,
+      laceColor: laceDetails,
+      soleColor: soleDetails,
+      tongueColor: tongueDetails,
+      tipColor: tipDetails,
+      extraOptions,
+      status: "in productie",
+    };
+
+    console.log("Payload to send:", payload);
+
+    try {
+      const response = await fetch(
+        "https://sneaker-configurator-backend.onrender.com/api/v1/orders",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(payload),
+        }
+      );
+
+      if (response.ok) {
+        console.log("Order succesvol geplaatst!");
+        alert("Je bestelling is geplaatst!");
+      } else {
+        console.error("Fout bij plaatsen van bestelling:", response.statusText);
+        alert("Er is iets misgegaan. Probeer het later opnieuw.");
+      }
+    } catch (error) {
+      console.error("Netwerkfout:", error);
+      alert("Er is een netwerkfout opgetreden.");
+    }
+  });
+
+function getSelectedDetails(materialNames) {
+  if (!sneakerModel) return null;
+
+  const materials = Array.isArray(materialNames)
+    ? materialNames
+    : [materialNames];
+  let selectedDetails = { color: null, material: null };
+
+  sneakerModel.traverse((child) => {
+    if (child.isMesh && materials.includes(child.material.name)) {
+      selectedDetails.color = child.material.color.getStyle();
+      selectedDetails.material = child.material.selectedMaterialKey || null;
+    }
+  });
+
+  return selectedDetails;
+}
+
 const animate = () => {
   requestAnimationFrame(animate);
   controls.update();
   renderer.render(scene, camera);
 };
 
-// Handle Resizing
 window.addEventListener("resize", () => {
   const innerWidth = window.innerWidth - 350;
   const innerHeight = window.innerHeight;
@@ -791,5 +874,4 @@ window.addEventListener("resize", () => {
   renderer.setSize(innerWidth, innerHeight);
 });
 
-// Start Animation
 animate();
