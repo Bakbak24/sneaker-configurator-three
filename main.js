@@ -725,26 +725,25 @@ document.addEventListener("DOMContentLoaded", () => {
       console.log(
         `Order submitted! Name: ${name}, Email: ${email}, Shoe Size: ${shoeSize}`
       );
+
       playGlowEffect();
       const sidebar = document.querySelector(".config-sidebar");
       sidebar.classList.add("hide-sidebar");
       updateCanvasSize(false);
       rotateShoe();
-      createNewShoeButton.classList.remove("hidden");
-      createNewShoeButton.classList.add("show");
-      gsap.fromTo(
-        createNewShoeButton,
-        { bottom: "-200px", opacity: 0 },
-        { bottom: "80px", opacity: 1, duration: 2, ease: "power2.out" }
-      );
+
       const popup = document.getElementById("order-confirmation");
+
+      popup.textContent = "📦Placing Your Order!📦";
+      popup.style.visibility = "visible";
       gsap.fromTo(
         popup,
-        { y: "-100px", opacity: 0, visibility: "visible" },
+        { y: "-100px", opacity: 0 },
         { y: "-50px", opacity: 1, duration: 1.5, ease: "power2.out" }
       );
 
       setTimeout(() => {
+        // Verbergt eerste popup
         gsap.to(popup, {
           y: "-100px",
           opacity: 0,
@@ -752,6 +751,39 @@ document.addEventListener("DOMContentLoaded", () => {
           ease: "power2.in",
           onComplete: () => {
             popup.style.visibility = "hidden";
+
+            // glow effect stopt na 4 seconden
+            setTimeout(() => {
+              stopGlowEffect();
+
+              popup.textContent = "🎉Placed Your Order!🎉";
+              popup.style.visibility = "visible";
+              gsap.fromTo(
+                popup,
+                { y: "-100px", opacity: 0 },
+                { y: "-50px",  opacity: 1, duration: 1.5, ease: "power2.out" }
+              );
+              createNewShoeButton.classList.remove("hidden");
+
+              gsap.fromTo(
+                createNewShoeButton,
+                { bottom: "-200px", opacity: 0 },
+                { bottom: "80px", opacity: 1, duration: 2, ease: "power2.out" }
+              );
+
+              setTimeout(() => {
+                // Verbergt de tweede popup na 3 seconden
+                gsap.to(popup, {
+                  y: "-100px",
+                  opacity: 0,
+                  duration: 0.5,
+                  ease: "power2.in",
+                  onComplete: () => {
+                    popup.style.visibility = "hidden";
+                  },
+                });
+              }, 3000);
+            }, 3000); // Glow-effect stopt hier
           },
         });
       }, 3000);
@@ -779,6 +811,18 @@ document.addEventListener("DOMContentLoaded", () => {
     }, 1000);
   });
 });
+
+function stopGlowEffect() {
+  if (!sneakerModel) return;
+
+  sneakerModel.traverse((child) => {
+    if (child.isMesh && child.originalMaterial) {
+      child.material = child.originalMaterial;
+      delete child.originalMaterial;
+    }
+  });
+  console.log("Glow effect stopped.");
+}
 
 document
   .getElementById("order-form-container")
@@ -831,14 +875,11 @@ document
 
       if (response.ok) {
         console.log("Order succesvol geplaatst!");
-        alert("Je bestelling is geplaatst!");
       } else {
         console.error("Fout bij plaatsen van bestelling:", response.statusText);
-        alert("Er is iets misgegaan. Probeer het later opnieuw.");
       }
     } catch (error) {
       console.error("Netwerkfout:", error);
-      alert("Er is een netwerkfout opgetreden.");
     }
   });
 
