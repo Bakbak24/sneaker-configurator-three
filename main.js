@@ -99,20 +99,18 @@ const loader = new GLTFLoader();
 loader.setDRACOLoader(dracoLoader);
 
 let defaultMaterials = {};
-let sneakerGroup = new THREE.Group();
-
-let sneakerModel;
+let sneakerModel = null;
+const sneakerGroup = new THREE.Group();
 loader.load(
   "/assets/Shoe_compressed.glb",
   (gltf) => {
-    console.log("Model geladen:", gltf.scene);
-    sneakerModel = gltf.scene;
+    sneakerModel= gltf.scene;
     sneakerModel.scale.set(15, 15, 15);
     sneakerModel.rotation.y = Math.PI / 2;
     sneakerModel.position.y = 0.1;
+
     sneakerModel.traverse((node) => {
       if (node.isMesh) {
-        console.log("Mesh gevonden:", node.name);
         node.castShadow = true;
         defaultMaterials[node.material.name] = node.material.clone();
       }
@@ -121,11 +119,25 @@ loader.load(
     sneakerGroup.add(sneakerModel);
     scene.add(sneakerGroup);
   },
-  undefined,
+  (xhr) => {
+    console.log(`Model loaded: ${(xhr.loaded / xhr.total) * 100}%`);
+  },
   (error) => {
     console.error("Error loading model:", error);
   }
 );
+
+const lod = new THREE.LOD();
+sneakerGroup.traverse((child) => {
+  if (child.isMesh) {
+    const lowDetail = child.clone();
+    lowDetail.geometry = child.geometry.clone();
+    lowDetail.geometry.scale(0.5, 0.5, 0.5);
+    lod.addLevel(child, 10);
+    lod.addLevel(lowDetail, 50);
+  }
+});
+scene.add(lod);
 
 const cameraPositions = {
   laces: { position: { x: 2.5, y: 4.5, z: 0 }, rotation: { x: 0, y: 0, z: 0 } },
@@ -171,21 +183,6 @@ function animateCamera(target) {
 
   console.log(`Camera moved to ${target}`);
 }
-
-const gui = new GUI({ autoPlace: false });
-document.getElementById("gui-container").appendChild(gui.domElement);
-
-const lightFolder = gui.addFolder("Light Settings");
-lightFolder.add(directionalLight.position, "x", -10, 10, 0.1).name("Light X");
-lightFolder.add(directionalLight.position, "y", -10, 10, 0.1).name("Light Y");
-lightFolder.add(directionalLight.position, "z", -10, 10, 0.1).name("Light Z");
-lightFolder.open();
-
-const cameraFolder = gui.addFolder("Camera Settings");
-cameraFolder.add(camera.position, "x", -10, 10, 0.1).name("Camera X");
-cameraFolder.add(camera.position, "y", -10, 10, 0.1).name("Camera Y");
-cameraFolder.add(camera.position, "z", -10, 10, 0.1).name("Camera Z");
-cameraFolder.open();
 
 const textureLoader = new THREE.TextureLoader();
 
