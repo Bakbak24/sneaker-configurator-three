@@ -2,7 +2,6 @@ import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import { DRACOLoader } from "three/examples/jsm/loaders/DRACOLoader";
-import { GUI } from "dat.gui";
 import { Text } from "troika-three-text";
 import { gsap } from "gsap";
 import JSConfetti from "js-confetti";
@@ -44,7 +43,7 @@ const renderer = new THREE.WebGLRenderer({
   antialias: true,
 });
 renderer.setSize(window.innerWidth, window.innerHeight);
-renderer.setPixelRatio(window.devicePixelRatio);
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 renderer.shadowMap.enabled = true;
 
 // Add OrbitControls
@@ -72,10 +71,6 @@ const envMap = cubeTextureLoader.load(
   ],
   () => {
     console.log("Environment map loaded successfully");
-  },
-  undefined,
-  (error) => {
-    console.error("Error loading environment map:", error);
   }
 );
 scene.environment = envMap;
@@ -977,11 +972,6 @@ function getSelectedDetails(materialNames) {
   return selectedDetails;
 }
 
-const animate = () => {
-  requestAnimationFrame(animate);
-  controls.update();
-  renderer.render(scene, camera);
-};
 
 window.addEventListener("resize", () => {
   const innerWidth = window.innerWidth - 350;
@@ -990,5 +980,11 @@ window.addEventListener("resize", () => {
   camera.updateProjectionMatrix();
   renderer.setSize(innerWidth, innerHeight);
 });
+
+const animate = () => {
+  requestAnimationFrame(animate);
+  controls.update();
+  renderer.render(scene, camera);
+};
 
 animate();
