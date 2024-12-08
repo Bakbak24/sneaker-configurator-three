@@ -320,27 +320,27 @@ button#apply-text-button:hover {
 }
 
 .leather-black {
-  background-image: url("/assets/textures/materials/leather/black_leather_color.jpg");
+  background-image: url("/assets/images/black_leather_color.webp");
 }
 
 .leather-red {
-  background-image: url("/assets/textures/materials/leather/leather_red.png");
+  background-image: url("/assets/images/leather_red.webp");
 }
 
 .leather-brown {
-  background-image: url("/assets/textures/materials/leather/brown_leather_albedo.jpg");
+  background-image: url("/assets/images/brown_leather_albedo.webp");
 }
 
 .leather-gray {
-  background-image: url("/assets/textures/materials/leather/gray_leather_color.jpg");
+  background-image: url("/assets/images/gray_leather_color.webp");
 }
 
 .leather-white {
-  background-image: url("/assets/textures/materials/leather/leather_white.jpg");
+  background-image: url("/assets/images/leather_white.webp");
 }
 
 .leather-redish {
-  background-image: url("/assets/textures/materials/leather/redish_leather_color.jpg");
+  background-image: url("/assets/images/redish_leather_color.webp");
 }
 
 #upload-logo-section {
