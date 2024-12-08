@@ -44,6 +44,7 @@ const renderer = new THREE.WebGLRenderer({
   antialias: true,
 });
 renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.setPixelRatio(window.devicePixelRatio);
 renderer.shadowMap.enabled = true;
 
 // Add OrbitControls
@@ -54,7 +55,7 @@ const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
 scene.add(ambientLight);
 
 const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
-directionalLight.position.set(5, 5, 5);
+directionalLight.position.set(0, 10, 2);
 directionalLight.castShadow = true;
 scene.add(directionalLight);
 
@@ -78,6 +79,15 @@ const envMap = cubeTextureLoader.load(
   }
 );
 scene.environment = envMap;
+
+// Add Floor
+const floorGeometry = new THREE.PlaneGeometry(100, 100);
+const floorMaterial = new THREE.ShadowMaterial({ opacity: 0.5 });
+const floor = new THREE.Mesh(floorGeometry, floorMaterial);
+floor.rotation.x = -Math.PI / 2;
+floor.position.y = -1.5;
+floor.receiveShadow = true;
+scene.add(floor);
 
 // Load Sneaker Model
 const dracoLoader = new DRACOLoader();
