@@ -528,3 +528,29 @@ button#apply-text-button:hover {
     transform: rotate(360deg);
   }
 }
+
+#status-bar {
+  position: absolute;
+  bottom: 120px;
+  width: 90%;
+  text-align: center;
+}
+
+#progress-dots {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.dot {
+  width: 15px;
+  height: 15px;
+  background-color: gray;
+  border-radius: 50%;
+  transition: background-color 0.3s ease;
+}
+
+.dot.active {
+  background-color: white;
+}

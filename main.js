@@ -5,7 +5,7 @@ import { DRACOLoader } from "three/examples/jsm/loaders/DRACOLoader";
 import { GUI } from "dat.gui";
 import { Text } from "troika-three-text";
 import { gsap } from "gsap";
-import JSConfetti from 'js-confetti'
+import JSConfetti from "js-confetti";
 
 console.log("Script gestart");
 
@@ -120,6 +120,8 @@ const cameraPositions = {
     position: { x: -3.2, y: 1.6, z: -0.2 },
     rotation: { x: 0, y: 0, z: 0 },
   },
+  order: { position: { x: 1.2, y: 3.1, z: -3.2 }, rotation: { x: 0, y: 0, z: 0 } },
+  done: { position: { x: 1.2, y: 3.1, z: -3.2  }, rotation: { x: 0, y: 0, z: 0 } },
 };
 
 function animateCamera(target) {
@@ -610,6 +612,17 @@ const updateCanvasSize = (isSidebarVisible) => {
   renderer.setSize(innerWidth, innerHeight);
 };
 
+const updateProgressDots = (currentStepIndex) => {
+  const dots = document.querySelectorAll(".dot");
+  dots.forEach((dot, index) => {
+    if (index === currentStepIndex) {
+      dot.classList.add("active");
+    } else {
+      dot.classList.remove("active");
+    }
+  });
+};
+
 // Switch Steps Logic
 document.addEventListener("DOMContentLoaded", () => {
   const lacesStep = document.getElementById("step-laces");
@@ -658,45 +671,85 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   };
 
+  let currentStepIndex = 0;
+
   // Navigation logic with camera targets
-  nextToSole?.addEventListener("click", () =>
-    switchStep(lacesStep, soleStep, "sole")
-  );
-  backToLaces?.addEventListener("click", () =>
-    switchStep(soleStep, lacesStep, "laces")
-  );
-  nextToTongue?.addEventListener("click", () =>
-    switchStep(soleStep, tongueStep, "tongue")
-  );
-  backToSole?.addEventListener("click", () =>
-    switchStep(tongueStep, soleStep, "sole")
-  );
-  nextToTip?.addEventListener("click", () =>
-    switchStep(tongueStep, stitchingStep, "tip")
-  );
-  backToTongue?.addEventListener("click", () =>
-    switchStep(stitchingStep, tongueStep, "tongue")
-  );
-  nextToLogo?.addEventListener("click", () =>
-    switchStep(stitchingStep, logoStep, "logo")
-  );
-  backToTip?.addEventListener("click", () =>
-    switchStep(logoStep, stitchingStep, "tip")
-  );
-  backToLogo?.addEventListener("click", () =>
-    switchStep(textStep, logoStep, "logo")
-  );
-  nextToText?.addEventListener("click", () =>
-    switchStep(logoStep, textStep, "text")
-  );
-  backToText?.addEventListener("click", () =>
-    switchStep(orderStep, textStep, "text")
-  );
-  nextToOrder?.addEventListener("click", () =>
-    switchStep(textStep, orderStep, null)
-  );
+  nextToSole?.addEventListener("click", () => {
+    currentStepIndex = 1; // Index van soleStep
+    switchStep(lacesStep, soleStep, "sole");
+    updateProgressDots(currentStepIndex);
+  });
+
+  backToLaces?.addEventListener("click", () => {
+    currentStepIndex = 0; // Index van lacesStep
+    switchStep(soleStep, lacesStep, "laces");
+    updateProgressDots(currentStepIndex);
+  });
+
+  nextToTongue?.addEventListener("click", () => {
+    currentStepIndex = 2; // Index van tongueStep
+    switchStep(soleStep, tongueStep, "tongue");
+    updateProgressDots(currentStepIndex);
+  });
+
+  backToSole?.addEventListener("click", () => {
+    currentStepIndex = 1; // Index van soleStep
+    switchStep(tongueStep, soleStep, "sole");
+    updateProgressDots(currentStepIndex);
+  });
+
+  nextToTip?.addEventListener("click", () => {
+    currentStepIndex = 3; // Index van stitchingStep
+    switchStep(tongueStep, stitchingStep, "tip");
+    updateProgressDots(currentStepIndex);
+  });
+
+  backToTongue?.addEventListener("click", () => {
+    currentStepIndex = 2; // Index van tongueStep
+    switchStep(stitchingStep, tongueStep, "tongue");
+    updateProgressDots(currentStepIndex);
+  });
+
+  nextToLogo?.addEventListener("click", () => {
+    currentStepIndex = 4; // Index van logoStep
+    switchStep(stitchingStep, logoStep, "logo");
+    updateProgressDots(currentStepIndex);
+  });
+
+  backToTip?.addEventListener("click", () => {
+    currentStepIndex = 3; // Index van stitchingStep
+    switchStep(logoStep, stitchingStep, "tip");
+    updateProgressDots(currentStepIndex);
+  });
+
+  backToLogo?.addEventListener("click", () => {
+    currentStepIndex = 4; // Index van logoStep
+    switchStep(textStep, logoStep, "logo");
+    updateProgressDots(currentStepIndex);
+  });
+
+  nextToText?.addEventListener("click", () => {
+    currentStepIndex = 5; // Index van textStep
+    switchStep(logoStep, textStep, "text");
+    updateProgressDots(currentStepIndex);
+  });
+
+  backToText?.addEventListener("click", () => {
+    currentStepIndex = 5; // Index van textStep
+    switchStep(orderStep, textStep, "text");
+    updateProgressDots(currentStepIndex);
+  });
+
+  nextToOrder?.addEventListener("click", () => {
+    currentStepIndex = 6; // Index van orderStep
+    switchStep(textStep, orderStep, "order");
+    updateProgressDots(currentStepIndex);
+  });
+
   doneButton.addEventListener("click", () => {
-    switchStep(null, orderStep, null);
+    currentStepIndex = 6; // Index van orderStep
+    switchStep(null, orderStep, "done");
+    updateProgressDots(currentStepIndex);
   });
 
   const rotateShoe = () => {
@@ -759,7 +812,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 { y: "-50px", opacity: 1, duration: 1.5, ease: "power2.out" }
               );
               jsConfetti.addConfetti({
-                emojis: ['🎉', '👟'],
+                emojis: ["🎉", "👟"],
                 emojiSize: 30,
                 confettiNumber: 120,
               });

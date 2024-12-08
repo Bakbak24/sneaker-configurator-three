@@ -11,6 +11,9 @@
       <div class="spinner"></div>
     </div>
     <div id="gui-container"></div>
+    <div id="step-status">
+      <span id="current-step">Step 1</span> of <span id="total-steps">7</span>
+    </div>
     <div id="configurator" class="config-sidebar">
       <div class="logo-container">
         <img src="./assets/swear-logo-wh.png" alt="Swear Logo" class="logo" />
@@ -938,6 +941,17 @@
               Order
             </button>
           </form>
+        </div>
+        <div id="status-bar">
+          <div id="progress-dots">
+            <span class="dot active"></span>
+            <span class="dot"></span>
+            <span class="dot"></span>
+            <span class="dot"></span>
+            <span class="dot"></span>
+            <span class="dot"></span>
+            <span class="dot"></span>
+          </div>
         </div>
         <div id="done-section">
           <button id="done-button">Place Order</button>
