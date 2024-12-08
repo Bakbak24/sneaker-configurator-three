@@ -5,6 +5,7 @@ import { DRACOLoader } from "three/examples/jsm/loaders/DRACOLoader";
 import { GUI } from "dat.gui";
 import { Text } from "troika-three-text";
 import { gsap } from "gsap";
+import JSConfetti from 'js-confetti'
 
 console.log("Script gestart");
 
@@ -718,13 +719,7 @@ document.addEventListener("DOMContentLoaded", () => {
     .addEventListener("submit", (e) => {
       e.preventDefault();
 
-      const name = document.getElementById("name").value;
-      const email = document.getElementById("email").value;
-      const shoeSize = document.getElementById("shoe-size").value;
-
-      console.log(
-        `Order submitted! Name: ${name}, Email: ${email}, Shoe Size: ${shoeSize}`
-      );
+      const jsConfetti = new JSConfetti();
 
       playGlowEffect();
       const sidebar = document.querySelector(".config-sidebar");
@@ -761,8 +756,13 @@ document.addEventListener("DOMContentLoaded", () => {
               gsap.fromTo(
                 popup,
                 { y: "-100px", opacity: 0 },
-                { y: "-50px",  opacity: 1, duration: 1.5, ease: "power2.out" }
+                { y: "-50px", opacity: 1, duration: 1.5, ease: "power2.out" }
               );
+              jsConfetti.addConfetti({
+                emojis: ['🎉', '👟'],
+                emojiSize: 30,
+                confettiNumber: 120,
+              });
               createNewShoeButton.classList.remove("hidden");
 
               gsap.fromTo(
@@ -786,7 +786,7 @@ document.addEventListener("DOMContentLoaded", () => {
             }, 3000); // Glow-effect stopt hier
           },
         });
-      }, 3000);
+      }, 2000);
     });
 
   createNewShoeButton.addEventListener("click", () => {
