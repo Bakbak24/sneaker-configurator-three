@@ -45,6 +45,7 @@ const renderer = new THREE.WebGLRenderer({
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 renderer.shadowMap.enabled = true;
+renderer.outputEncoding = THREE.sRGBEncoding;
 
 // Add OrbitControls
 const controls = new OrbitControls(camera, renderer.domElement);
@@ -179,89 +180,121 @@ function animateCamera(target) {
   console.log(`Camera moved to ${target}`);
 }
 
+// Setup Texture Loader with Promises
 const textureLoader = new THREE.TextureLoader();
+const textureCache = {};
 
-const leatherBlack = textureLoader.load(
-  "/assets/textures/materials/leather/black_leather_color.jpg"
-);
-const leatherNormalBlack = textureLoader.load(
-  "/assets/textures/materials/leather/black_leather_normal.jpg"
-);
-const leatherRoughnessBlack = textureLoader.load(
-  "/assets/textures/materials/leather/black_leather_roughness.jpg"
-);
-
-const leatherRed = textureLoader.load(
-  "/assets/textures/materials/leather/leather_red.png"
-);
-
-const leatherBrown = textureLoader.load(
-  "/assets/textures/materials/leather/brown_leather_albedo.jpg"
-);
-const leatherRoughnessBrown = textureLoader.load(
-  "/assets/textures/materials/leather/brown_leather_rough.jpg"
-);
-
-const leatherGray = textureLoader.load(
-  "/assets/textures/materials/leather/gray_leather_color.jpg"
-);
-const leatherNormalGray = textureLoader.load(
-  "/assets/textures/materials/leather/gray_leather_normal.jpg"
-);
-const leatherRoughnessGray = textureLoader.load(
-  "/assets/textures/materials/leather/gray_leather_roughness.jpg"
-);
-
-const leatherWhite = textureLoader.load(
-  "/assets/textures/materials/leather/leather_white.jpg"
-);
-const leatherRedish = textureLoader.load(
-  "/assets/textures/materials/leather/redish_leather_color.jpg"
-);
-const leatherNormalRedish = textureLoader.load(
-  "/assets/textures/materials/leather/redish_leather_normal.jpg"
-);
-const leatherRoughnessRedish = textureLoader.load(
-  "/assets/textures/materials/leather/redish_leather_roughness.jpg"
-);
-
-const materials = {
-  leatherBlack: new THREE.MeshStandardMaterial({
-    map: leatherBlack,
-    normalMap: leatherNormalBlack,
-    roughnessMap: leatherRoughnessBlack,
-    roughness: 1,
-  }),
-  leatherRed: new THREE.MeshStandardMaterial({
-    map: leatherRed,
-    roughness: 1,
-  }),
-  leatherBrown: new THREE.MeshStandardMaterial({
-    map: leatherBrown,
-    roughnessMap: leatherRoughnessBrown,
-    roughness: 1,
-  }),
-  leatherGray: new THREE.MeshStandardMaterial({
-    map: leatherGray,
-    normalMap: leatherNormalGray,
-    roughnessMap: leatherRoughnessGray,
-    roughness: 1,
-  }),
-  leatherWhite: new THREE.MeshStandardMaterial({
-    map: leatherWhite,
-    roughness: 1,
-  }),
-  leatherRedish: new THREE.MeshStandardMaterial({
-    map: leatherRedish,
-    normalMap: leatherNormalRedish,
-    roughnessMap: leatherRoughnessRedish,
-    roughness: 1,
-  }),
+const loadTexture = (url) => {
+  if (textureCache[url]) {
+    console.log(`Texture from cache: ${url}`);
+    return Promise.resolve(textureCache[url]);
+  }
+  console.log(`Loading texture: ${url}`);
+  return new Promise((resolve, reject) => {
+    textureLoader.load(
+      url,
+      (texture) => {
+        textureCache[url] = texture;
+        console.log(`Texture loaded: ${url}`);
+        resolve(texture);
+      },
+      undefined,
+      (error) => {
+        console.error(`Error loading texture ${url}`, error);
+        reject(error);
+      }
+    );
+  });
 };
 
-function applyMaterialToPart(partNames, materialKey) {
-  if (!sneakerModel || !materials[materialKey]) return;
+// Parallel Loading of Textures
+const loadAllTextures = async () => {
+  console.log("Starting to load textures...");
+  const textures = await Promise.all([
+    loadTexture("/assets/textures/materials/leather/black_leather_color.jpg"),
+    loadTexture("/assets/textures/materials/leather/black_leather_normal.jpg"),
+    loadTexture("/assets/textures/materials/leather/black_leather_roughness.jpg"),
+    loadTexture("/assets/textures/materials/leather/leather_red.png"),
+    loadTexture("/assets/textures/materials/leather/brown_leather_albedo.jpg"),
+    loadTexture("/assets/textures/materials/leather/brown_leather_rough_.jpg"),
+    loadTexture("/assets/textures/materials/leather/gray_leather_color.jpg"),
+    loadTexture("/assets/textures/materials/leather/gray_leather_normal.jpg"),
+    loadTexture("/assets/textures/materials/leather/gray_leather_roughness.jpg"),
+    loadTexture("/assets/textures/materials/leather/leather_white.jpg"),
+    loadTexture("/assets/textures/materials/leather/redish_leather_color.jpg"),
+    loadTexture("/assets/textures/materials/leather/redish_leather_normal.jpg"),
+    loadTexture("/assets/textures/materials/leather/redish_leather_roughness.jpg"),
+  ]);
 
+  console.log("All textures loaded successfully");
+  return {
+    leatherBlack: textures[0],
+    leatherNormalBlack: textures[1],
+    leatherRoughnessBlack: textures[2],
+    leatherRed: textures[3],
+    leatherBrown: textures[4],
+    leatherRoughnessBrown: textures[5],
+    leatherGray: textures[6],
+    leatherNormalGray: textures[7],
+    leatherRoughnessGray: textures[8],
+    leatherWhite: textures[9],
+    leatherRedish: textures[10],
+    leatherNormalRedish: textures[11],
+    leatherRoughnessRedish: textures[12],
+  };
+};
+
+const initializeMaterials = async () => {
+  console.log("Initializing materials...");
+  const textures = await loadAllTextures();
+
+  const materials = {
+    leatherBlack: new THREE.MeshStandardMaterial({
+      map: textures.leatherBlack,
+      normalMap: textures.leatherNormalBlack,
+      roughnessMap: textures.leatherRoughnessBlack,
+      roughness: 1,
+    }),
+    leatherRed: new THREE.MeshStandardMaterial({
+      map: textures.leatherRed,
+      roughness: 1,
+    }),
+    leatherBrown: new THREE.MeshStandardMaterial({
+      map: textures.leatherBrown,
+      roughnessMap: textures.leatherRoughnessBrown,
+      roughness: 1,
+    }),
+    leatherGray: new THREE.MeshStandardMaterial({
+      map: textures.leatherGray,
+      normalMap: textures.leatherNormalGray,
+      roughnessMap: textures.leatherRoughnessGray,
+      roughness: 1,
+    }),
+    leatherWhite: new THREE.MeshStandardMaterial({
+      map: textures.leatherWhite,
+      roughness: 1,
+    }),
+    leatherRedish: new THREE.MeshStandardMaterial({
+      map: textures.leatherRedish,
+      normalMap: textures.leatherNormalRedish,
+      roughnessMap: textures.leatherRoughnessRedish,
+      roughness: 1,
+    }),
+  };
+
+  console.log("Materials initialized successfully", materials);
+  return materials;
+};
+
+function applyMaterialToPart(partNames, materialKey, materials) {
+  if (!sneakerModel || !materials[materialKey]) {
+    console.error(
+      `Cannot apply material. Sneaker model or material ${materialKey} not found.`
+    );
+    return;
+  }
+
+  console.log(`Applying material ${materialKey} to part(s):`, partNames);
   const parts = Array.isArray(partNames) ? partNames : [partNames];
 
   sneakerModel.traverse((child) => {
@@ -273,30 +306,20 @@ function applyMaterialToPart(partNames, materialKey) {
       child.material.roughness = selectedMaterial.roughness || 1;
       child.material.needsUpdate = true;
 
-      // Voegt de naam van het materiaal toe aan het mesh-object
-      child.material.selectedMaterialKey = materialKey;
-
       console.log(
-        `Material applied to ${child.material.name} using ${materialKey}`
+        `Material ${materialKey} applied to ${child.material.name}`
       );
     }
   });
 }
 
-function setupMaterialEventListeners(partNames, containerId) {
-  document
-    .querySelectorAll(`#${containerId} .material-button`)
-    .forEach((button) => {
-      button.addEventListener("click", () => {
-        const materialKey = button.getAttribute("data-material");
-        applyMaterialToPart(partNames, materialKey);
-      });
-    });
-}
-
 function resetMaterialForPart(partNames) {
-  if (!sneakerModel) return;
+  if (!sneakerModel) {
+    console.error("Sneaker model not found. Cannot reset material.");
+    return;
+  }
 
+  console.log(`Resetting material for part(s):`, partNames);
   const parts = Array.isArray(partNames) ? partNames : [partNames];
 
   sneakerModel.traverse((child) => {
@@ -312,41 +335,58 @@ function resetMaterialForPart(partNames) {
   });
 }
 
-document.querySelector(".reset-laces-button").addEventListener("click", () => {
-  resetMaterialForPart("mat_laces");
-});
+function setupMaterialEventListeners(partNames, containerId, materials) {
+  console.log(`Setting up event listeners for ${containerId}`);
+  document
+    .querySelectorAll(`#${containerId} .material-button`)
+    .forEach((button) => {
+      button.addEventListener("click", () => {
+        const materialKey = button.getAttribute("data-material");
+        console.log(`Material button clicked: ${materialKey}`);
+        applyMaterialToPart(partNames, materialKey, materials);
+      });
+    });
+}
 
-document.querySelector(".reset-sole-button").addEventListener("click", () => {
-  resetMaterialForPart(["mat_sole_top", "mat_sole_bottom"]);
-});
+(async () => {
+  const materials = await initializeMaterials();
 
-document.querySelector(".reset-tongue-button").addEventListener("click", () => {
-  resetMaterialForPart("inside");
-});
-
-document.querySelector(".reset-tip-button").addEventListener("click", () => {
-  resetMaterialForPart(["mat_outside_1", "mat_outside_2", "mat_outside_3"]);
-});
-
-document
-  .getElementById("reset-materials-button")
-  .addEventListener("click", () => {
-    resetMaterials();
+  setupMaterialEventListeners("mat_laces", "laces-material-options", materials);
+  setupMaterialEventListeners(
+    ["mat_sole_top", "mat_sole_bottom"],
+    "sole-material-options",
+    materials
+  );
+  setupMaterialEventListeners("inside", "tongue-material-options", materials);
+  setupMaterialEventListeners(
+    ["mat_outside_1", "mat_outside_2", "mat_outside_3"],
+    "tip-material-options",
+    materials
+  );
+  document.querySelector(".reset-laces-button").addEventListener("click", () => {
+    console.log("Resetting laces material");
+    resetMaterialForPart("mat_laces");
   });
 
-setupMaterialEventListeners("mat_laces", "laces-material-options");
+  document
+    .querySelector(".reset-sole-button")
+    .addEventListener("click", () => {
+      console.log("Resetting sole material");
+      resetMaterialForPart(["mat_sole_top", "mat_sole_bottom"]);
+    });
 
-setupMaterialEventListeners(
-  ["mat_sole_top", "mat_sole_bottom"],
-  "sole-material-options"
-);
+  document
+    .querySelector(".reset-tongue-button")
+    .addEventListener("click", () => {
+      console.log("Resetting tongue material");
+      resetMaterialForPart("inside");
+    });
 
-setupMaterialEventListeners("inside", "tongue-material-options");
-
-setupMaterialEventListeners(
-  ["mat_outside_1", "mat_outside_2", "mat_outside_3"],
-  "tip-material-options"
-);
+  document.querySelector(".reset-tip-button").addEventListener("click", () => {
+    console.log("Resetting tip material");
+    resetMaterialForPart(["mat_outside_1", "mat_outside_2", "mat_outside_3"]);
+  });
+})();
 
 let currentLogo = null;
 function addLogo(uploadedImage) {
