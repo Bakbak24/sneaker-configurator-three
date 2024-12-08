@@ -434,21 +434,6 @@ function addLogo(uploadedImage) {
   currentLogo = cylinder;
   updateSidebarPreview(imageURL);
   console.log("New Logo toegevoegd");
-
-  const logoFolder = gui.addFolder("Logo Settings");
-  logoFolder.add(cylinder.position, "x", -10, 10, 0.1).name("Logo X");
-  logoFolder.add(cylinder.position, "y", -10, 10, 0.1).name("Logo Y");
-  logoFolder.add(cylinder.position, "z", -10, 10, 0.1).name("Logo Z");
-  logoFolder
-    .add(cylinder.rotation, "x", -Math.PI, Math.PI, 0.1)
-    .name("Logo Rotation X");
-  logoFolder
-    .add(cylinder.rotation, "y", -Math.PI, Math.PI, 0.1)
-    .name("Logo Rotation Y");
-  logoFolder
-    .add(cylinder.rotation, "z", -Math.PI, Math.PI, 0.1)
-    .name("Logo Rotation Z");
-  logoFolder.open();
 }
 
 document
