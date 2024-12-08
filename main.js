@@ -9,9 +9,25 @@ import JSConfetti from "js-confetti";
 
 console.log("Script gestart");
 
-// Initialize Scene
 const scene = new THREE.Scene();
-scene.background = new THREE.Color(0x1a1a1a);
+const createGradientTexture = () => {
+  const canvas = document.createElement("canvas");
+  canvas.width = 512;
+  canvas.height = 512;
+
+  const ctx = canvas.getContext("2d");
+  const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+  gradient.addColorStop(0, "#444"); // Donkergrijs
+  gradient.addColorStop(1, "#D9D9D9"); // Lichtgrijs
+
+  ctx.fillStyle = gradient;
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  const texture = new THREE.CanvasTexture(canvas);
+  return texture;
+};
+
+scene.background = createGradientTexture();
 
 // Initialize Camera
 const camera = new THREE.PerspectiveCamera(
