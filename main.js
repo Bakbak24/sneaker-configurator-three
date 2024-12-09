@@ -100,7 +100,7 @@ const sneakerGroup = new THREE.Group();
 loader.load(
   "/assets/Shoe_compressed.glb",
   (gltf) => {
-    sneakerModel= gltf.scene;
+    sneakerModel = gltf.scene;
     sneakerModel.scale.set(15, 15, 15);
     sneakerModel.rotation.y = Math.PI / 2;
     sneakerModel.position.y = 0.1;
@@ -154,8 +154,14 @@ const cameraPositions = {
     position: { x: -3.2, y: 1.6, z: -0.2 },
     rotation: { x: 0, y: 0, z: 0 },
   },
-  order: { position: { x: 1.2, y: 3.1, z: -3.2 }, rotation: { x: 0, y: 0, z: 0 } },
-  done: { position: { x: 1.2, y: 3.1, z: -3.2  }, rotation: { x: 0, y: 0, z: 0 } },
+  order: {
+    position: { x: 1.2, y: 3.1, z: -3.2 },
+    rotation: { x: 0, y: 0, z: 0 },
+  },
+  done: {
+    position: { x: 1.2, y: 3.1, z: -3.2 },
+    rotation: { x: 0, y: 0, z: 0 },
+  },
 };
 
 function animateCamera(target) {
@@ -213,17 +219,23 @@ const loadAllTextures = async () => {
   const textures = await Promise.all([
     loadTexture("/assets/textures/materials/leather/black_leather_color.jpg"),
     loadTexture("/assets/textures/materials/leather/black_leather_normal.jpg"),
-    loadTexture("/assets/textures/materials/leather/black_leather_roughness.jpg"),
+    loadTexture(
+      "/assets/textures/materials/leather/black_leather_roughness.jpg"
+    ),
     loadTexture("/assets/textures/materials/leather/leather_red.png"),
     loadTexture("/assets/textures/materials/leather/brown_leather_albedo.jpg"),
     loadTexture("/assets/textures/materials/leather/brown_leather_rough_.jpg"),
     loadTexture("/assets/textures/materials/leather/gray_leather_color.jpg"),
     loadTexture("/assets/textures/materials/leather/gray_leather_normal.jpg"),
-    loadTexture("/assets/textures/materials/leather/gray_leather_roughness.jpg"),
+    loadTexture(
+      "/assets/textures/materials/leather/gray_leather_roughness.jpg"
+    ),
     loadTexture("/assets/textures/materials/leather/leather_white.jpg"),
     loadTexture("/assets/textures/materials/leather/redish_leather_color.jpg"),
     loadTexture("/assets/textures/materials/leather/redish_leather_normal.jpg"),
-    loadTexture("/assets/textures/materials/leather/redish_leather_roughness.jpg"),
+    loadTexture(
+      "/assets/textures/materials/leather/redish_leather_roughness.jpg"
+    ),
   ]);
 
   console.log("All textures loaded successfully");
@@ -306,9 +318,9 @@ function applyMaterialToPart(partNames, materialKey, materials) {
       child.material.roughness = selectedMaterial.roughness || 1;
       child.material.needsUpdate = true;
 
-      console.log(
-        `Material ${materialKey} applied to ${child.material.name}`
-      );
+      child.material.selectedMaterialKey = materialKey;
+
+      console.log(`Material ${materialKey} applied to ${child.material.name}`);
     }
   });
 }
@@ -363,17 +375,17 @@ function setupMaterialEventListeners(partNames, containerId, materials) {
     "tip-material-options",
     materials
   );
-  document.querySelector(".reset-laces-button").addEventListener("click", () => {
-    console.log("Resetting laces material");
-    resetMaterialForPart("mat_laces");
-  });
-
   document
-    .querySelector(".reset-sole-button")
+    .querySelector(".reset-laces-button")
     .addEventListener("click", () => {
-      console.log("Resetting sole material");
-      resetMaterialForPart(["mat_sole_top", "mat_sole_bottom"]);
+      console.log("Resetting laces material");
+      resetMaterialForPart("mat_laces");
     });
+
+  document.querySelector(".reset-sole-button").addEventListener("click", () => {
+    console.log("Resetting sole material");
+    resetMaterialForPart(["mat_sole_top", "mat_sole_bottom"]);
+  });
 
   document
     .querySelector(".reset-tongue-button")
@@ -1011,7 +1023,6 @@ function getSelectedDetails(materialNames) {
 
   return selectedDetails;
 }
-
 
 window.addEventListener("resize", () => {
   const innerWidth = window.innerWidth - 350;
